@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/marioharper/commuter-cli/directions"
 	"github.com/spf13/cobra"
 )
 
@@ -12,6 +13,7 @@ var initCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("init called")
+		directions.Init()
 	},
 }
 
