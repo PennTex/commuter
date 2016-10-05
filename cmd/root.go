@@ -11,7 +11,7 @@ import (
 var cfgFile string
 
 var RootCmd = &cobra.Command{
-	Use:   "commuter-cli",
+	Use:   "commuter",
 	Short: "Tool to get travel time",
 	Long:  ``,
 }
@@ -35,9 +35,9 @@ func initConfig() {
 		viper.SetConfigFile(cfgFile)
 	}
 
-	viper.SetConfigName(".commuter-cli") // name of config file (without extension)
-	viper.AddConfigPath("$HOME")         // adding home directory as first search path
-	viper.AutomaticEnv()                 // read in environment variables that match
+	viper.SetConfigName(".commuter") // name of config file (without extension)
+	viper.AddConfigPath("$HOME")     // adding home directory as first search path
+	viper.AutomaticEnv()             // read in environment variables that match
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err == nil {

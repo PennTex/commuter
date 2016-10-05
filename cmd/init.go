@@ -3,7 +3,7 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/marioharper/commuter-cli/directions"
+	"github.com/marioharper/commuter/directions"
 	"github.com/spf13/cobra"
 )
 
