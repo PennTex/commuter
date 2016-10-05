@@ -3,27 +3,32 @@ package directions
 import (
 	"log"
 	"os"
+	"strconv"
+	"time"
 
-	"github.com/kr/pretty"
 	"golang.org/x/net/context"
 	"googlemaps.github.io/maps"
 )
 
-func Init() {
+var mapsAPIKey = os.Getenv("MAPS_API_KEY")
 
-	// get maps api key from environment
-	mapsAPIKey := os.Getenv("MAPS_API_KEY")
+type Location struct {
+	Name    string
+	Address string
+}
 
-	c, err := maps.NewClient(maps.WithAPIKey(mapsAPIKey))
+func TotalDistDur(start, end Location) (int, float64) {
+
+	client, err := maps.NewClient(maps.WithAPIKey(mapsAPIKey))
 	if err != nil {
 		log.Fatalf("fatal error: %s", err)
 	}
 	r := &maps.DirectionsRequest{
-		Origin:        "1835 Kramer Ln Austin TX",
-		Destination:   "1500 Royal Crest Drive Austin TX",
-		DepartureTime: "now",
+		Origin:        start.Address,
+		Destination:   end.Address,
+		DepartureTime: strconv.FormatInt(time.Now().Unix(), 10),
 	}
-	resp, _, err := c.Directions(context.Background(), r)
+	resp, _, err := client.Directions(context.Background(), r)
 	if err != nil {
 		log.Fatalf("fatal error: %s", err)
 	}
@@ -37,5 +42,8 @@ func Init() {
 		totalDuration += leg.DurationInTraffic.Minutes()
 	}
 
-	pretty.Println(totalDuration)
+	return totalDistance, totalDuration
+}
+
+func Init() {
 }
