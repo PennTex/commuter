@@ -1,1 +1,1 @@
-# commuter-cli
+# commuter
