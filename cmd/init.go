@@ -9,6 +9,7 @@ import (
 	"os/user"
 	"strings"
 
+	"github.com/marioharper/commuter/cmd/utils"
 	"github.com/marioharper/commuter/directions"
 	"github.com/spf13/cobra"
 )
@@ -26,7 +27,7 @@ var initCmd = &cobra.Command{
 		}
 
 		f, err := os.Create(fmt.Sprintf("%s/commuter-config.json", usr.HomeDir))
-		check(err)
+		utils.Check(err)
 
 		workReader := bufio.NewReader(os.Stdin)
 		fmt.Print("Enter work address: ")
@@ -62,10 +63,4 @@ var initCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(initCmd)
-}
-
-func check(e error) {
-	if e != nil {
-		panic(e)
-	}
 }
