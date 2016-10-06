@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"time"
 
 	"github.com/marioharper/commuter/directions"
 	"github.com/spf13/cobra"
@@ -13,6 +14,7 @@ var cfgFile string
 var From string
 var To string
 var Locations []directions.Location
+var Increments int32
 
 var RootCmd = &cobra.Command{
 	Use:   "commuter",
@@ -37,10 +39,40 @@ var RootCmd = &cobra.Command{
 
 		from := Locations[getLocationByName(Locations, From)]
 		to := Locations[getLocationByName(Locations, To)]
+		currTime := time.Now().Unix()
+		minute := 60
+		increment := int64(15 * minute)
+		var traveTime int64 // time leaving
+		var info directions.CommuteInfo
 
-		_, dur := directions.TotalDistDur(from, to)
-		fmt.Printf("\n Commute info from %s to %s\n", from.Name, to.Name)
-		fmt.Printf("\nDuration: %f minutes \n", dur)
+		commute := directions.Commute{
+			From: from,
+			To:   to,
+		}
+
+		fmt.Printf("\nCommute from %s to %s\n", commute.From.Name, commute.To.Name)
+		for i := 0; i < 5; i++ {
+			var printTime string
+			traveTime = currTime + (increment * int64(i)) // time leaving
+			info = commute.GetInfo(traveTime)
+			hr, min, sec := time.Unix(traveTime, 0).Clock()
+			amPm := "AM"
+
+			if hr > 12 {
+				hr -= 12
+				amPm = "PM"
+			} else if hr == 0 {
+				hr = 12
+			}
+
+			if i == 0 {
+				printTime = "Now"
+			} else {
+				printTime = fmt.Sprintf("%d:%d:%d %s", hr, min, sec, amPm)
+			}
+			fmt.Printf("\n %s: %d minutes \n", printTime, int(info.TotalDuration))
+		}
+
 	},
 }
 
@@ -65,9 +97,8 @@ func Execute() {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	RootCmd.PersistentFlags().StringVarP(&From, "from", "f", "work", "Environment to manipulate")
-	RootCmd.PersistentFlags().StringVarP(&To, "to", "t", "home", "Environment to manipulate")
-
+	RootCmd.PersistentFlags().StringVarP(&From, "from", "f", "work", "Starting location name")
+	RootCmd.PersistentFlags().StringVarP(&To, "to", "t", "home", "Destination location name")
 	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.commuter-cli.yaml)")
 }
 

@@ -4,7 +4,6 @@ import (
 	"log"
 	"os"
 	"strconv"
-	"time"
 
 	"golang.org/x/net/context"
 	"googlemaps.github.io/maps"
@@ -17,16 +16,28 @@ type Location struct {
 	Address string
 }
 
-func TotalDistDur(start, end Location) (int, float64) {
+type Commute struct {
+	From Location
+	To   Location
+}
+
+type CommuteInfo struct {
+	TotalDistance int
+	TotalDuration float64
+}
+
+func (c *Commute) GetInfo(travelTime int64) CommuteInfo {
+
+	var info CommuteInfo
 
 	client, err := maps.NewClient(maps.WithAPIKey(mapsAPIKey))
 	if err != nil {
 		log.Fatalf("fatal error: %s", err)
 	}
 	r := &maps.DirectionsRequest{
-		Origin:        start.Address,
-		Destination:   end.Address,
-		DepartureTime: strconv.FormatInt(time.Now().Unix(), 10),
+		Origin:        c.From.Address,
+		Destination:   c.To.Address,
+		DepartureTime: strconv.FormatInt(travelTime, 10),
 	}
 	resp, _, err := client.Directions(context.Background(), r)
 	if err != nil {
@@ -42,8 +53,8 @@ func TotalDistDur(start, end Location) (int, float64) {
 		totalDuration += leg.DurationInTraffic.Minutes()
 	}
 
-	return totalDistance, totalDuration
-}
+	info.TotalDistance = totalDistance
+	info.TotalDuration = totalDuration
 
-func Init() {
+	return info
 }
