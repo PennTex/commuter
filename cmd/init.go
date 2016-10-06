@@ -29,7 +29,7 @@ var initCmd = &cobra.Command{
 		homeAddress = strings.TrimSpace(homeAddress)
 
 		w := bufio.NewWriter(f)
-		w.WriteString("{ \n \t \"locations\" : { \n \t \t \"work\" : { \n \t \t \t \"address\": \"" + workAddress + "\" \n \t \t }, \n \t \t \"home\" : { \n \t \t \t \"address\": \"" + homeAddress + "\" \n \t \t } \n \t } \n }")
+		w.WriteString("[ \n \t { \n \t \t \"name\" : \"work\" , \n \t \t \"address\": \"" + workAddress + "\" \n \t }, \n \t { \n \t \t \"name\" : \"home\" , \n \t \t \"address\": \"" + homeAddress + "\" \n \t } \n ]")
 		w.Flush()
 	},
 }
