@@ -2,10 +2,14 @@ package cmd
 
 import (
 	"bufio"
-	"os"
+	"encoding/json"
 	"fmt"
+	"log"
+	"os"
+	"os/user"
 	"strings"
 
+	"github.com/marioharper/commuter/directions"
 	"github.com/spf13/cobra"
 )
 
@@ -14,22 +18,44 @@ var initCmd = &cobra.Command{
 	Short: "Init your commuter",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		var addresses []directions.Location
 
-		f, err := os.Create("config.json")
-    	check(err)
+		usr, err := user.Current()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		f, err := os.Create(fmt.Sprintf("%s/commuter-config.json", usr.HomeDir))
+		check(err)
 
 		workReader := bufio.NewReader(os.Stdin)
 		fmt.Print("Enter work address: ")
+
+		// Get work address
 		workAddress, _ := workReader.ReadString('\n')
 		workAddress = strings.TrimSpace(workAddress)
 
+		work := directions.Location{
+			Name:    "work",
+			Address: workAddress,
+		}
+		addresses = append(addresses, work)
+
+		// Get home address
 		homeReader := bufio.NewReader(os.Stdin)
 		fmt.Print("Enter home address: ")
 		homeAddress, _ := homeReader.ReadString('\n')
 		homeAddress = strings.TrimSpace(homeAddress)
+		home := directions.Location{
+			Name:    "home",
+			Address: homeAddress,
+		}
+		addresses = append(addresses, home)
+		addressesJSON, _ := json.Marshal(addresses)
 
+		// Write to config file
 		w := bufio.NewWriter(f)
-		w.WriteString("[ \n \t { \n \t \t \"name\" : \"work\" , \n \t \t \"address\": \"" + workAddress + "\" \n \t }, \n \t { \n \t \t \"name\" : \"home\" , \n \t \t \"address\": \"" + homeAddress + "\" \n \t } \n ]")
+		w.WriteString(string(addressesJSON))
 		w.Flush()
 	},
 }
@@ -39,7 +65,7 @@ func init() {
 }
 
 func check(e error) {
-    if e != nil {
-        panic(e)
-    }
+	if e != nil {
+		panic(e)
+	}
 }
