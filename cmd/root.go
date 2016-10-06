@@ -3,11 +3,12 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"os/user"
 	"time"
 
+	"github.com/marioharper/commuter/cmd/utils"
 	"github.com/marioharper/commuter/directions"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var cfgFile string
@@ -33,6 +34,14 @@ var RootCmd = &cobra.Command{
 
 		Locations = append(Locations, home)
 		Locations = append(Locations, work)
+
+		//Check if init file exists
+		usr, err := user.Current()
+		utils.Check(err)
+		if _, err := os.Stat(fmt.Sprintf("%s/commuter-config.json", usr.HomeDir)); os.IsNotExist(err) && cmd.Use != "init" {
+			fmt.Println("Please initialize Commuter by using the 'commuter init' command")
+			os.Exit(-1)
+		}
 
 	},
 	Run: func(cmd *cobra.Command, args []string) {
@@ -88,32 +97,17 @@ func getLocationByName(locations []directions.Location, name string) int {
 }
 
 func Execute() {
+
 	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
 		os.Exit(-1)
 	}
+
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
 
 	RootCmd.PersistentFlags().StringVarP(&From, "from", "f", "work", "Starting location name")
 	RootCmd.PersistentFlags().StringVarP(&To, "to", "t", "home", "Destination location name")
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.commuter-cli.yaml)")
-}
 
-// initConfig reads in config file and ENV variables if set.
-func initConfig() {
-	if cfgFile != "" { // enable ability to specify config file via flag
-		viper.SetConfigFile(cfgFile)
-	}
-
-	viper.SetConfigName(".commuter") // name of config file (without extension)
-	viper.AddConfigPath("$HOME")     // adding home directory as first search path
-	viper.AutomaticEnv()             // read in environment variables that match
-
-	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Println("Using config file:", viper.ConfigFileUsed())
-	}
 }

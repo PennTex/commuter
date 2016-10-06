@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 	"os/user"
 	"strings"
@@ -22,9 +21,7 @@ var initCmd = &cobra.Command{
 		var addresses []directions.Location
 
 		usr, err := user.Current()
-		if err != nil {
-			log.Fatal(err)
-		}
+		utils.Check(err)
 
 		f, err := os.Create(fmt.Sprintf("%s/commuter-config.json", usr.HomeDir))
 		utils.Check(err)
@@ -35,7 +32,6 @@ var initCmd = &cobra.Command{
 		// Get work address
 		workAddress, _ := workReader.ReadString('\n')
 		workAddress = strings.TrimSpace(workAddress)
-
 		work := directions.Location{
 			Name:    "work",
 			Address: workAddress,
@@ -52,6 +48,8 @@ var initCmd = &cobra.Command{
 			Address: homeAddress,
 		}
 		addresses = append(addresses, home)
+
+		// To JSON
 		addressesJSON, _ := json.Marshal(addresses)
 
 		// Write to config file
