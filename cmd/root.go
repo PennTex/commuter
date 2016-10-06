@@ -68,7 +68,7 @@ var RootCmd = &cobra.Command{
 			if i == 0 {
 				printTime = "Now"
 			} else {
-				printTime = fmt.Sprintf("%d:%d:%d %s", hr, min, sec, amPm)
+				printTime = fmt.Sprintf("%d:%02d:%02d %s", hr, min, sec, amPm)
 			}
 			fmt.Printf("\n %s: %d minutes \n", printTime, int(info.TotalDuration))
 		}

@@ -1,0 +1,10 @@
+{ 
+ 	 "locations" : { 
+ 	 	 "work" : { 
+ 	 	 	 "address": "123 main" 
+ 	 	 }, 
+ 	 	 "home" : { 
+ 	 	 	 "address": "123 main" 
+ 	 	 } 
+ 	 } 
+ }
