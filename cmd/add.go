@@ -1,8 +1,13 @@
 package cmd
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"strings"
 
+	"github.com/marioharper/commuter/cmd/utils"
+	"github.com/marioharper/commuter/directions"
 	"github.com/spf13/cobra"
 )
 
@@ -12,22 +17,29 @@ var addCmd = &cobra.Command{
 	Short: "Add another saved address",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Work your own magic here
-		fmt.Println("add called")
+		workReader := bufio.NewReader(os.Stdin)
+
+		// Get location
+		fmt.Print("Enter location name: ")
+		name, _ := workReader.ReadString('\n')
+		name = strings.TrimSpace(name)
+
+		// Get address
+		fmt.Print("Enter location address: ")
+		address, _ := workReader.ReadString('\n')
+		address = strings.TrimSpace(address)
+
+		// Create location
+		work := directions.Location{
+			Name:    name,
+			Address: address,
+		}
+
+		// Save location to config
+		utils.AddLocation(ConfigFile, work)
 	},
 }
 
 func init() {
 	RootCmd.AddCommand(addCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// addCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// addCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-
 }
