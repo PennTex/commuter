@@ -11,7 +11,7 @@ func Check(e error) {
 	}
 }
 
-func RemoveLocation(configFile string, locationName string) {
+func DeleteLocation(configFile string, locationName string) {
 	configS := config.GetConfig(configFile)
 
 	locationIdx := GetLocationByName(configS.Locations, locationName)

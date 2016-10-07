@@ -14,7 +14,7 @@ import (
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add",
-	Short: "Add another saved address",
+	Short: "Add a saved location",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		workReader := bufio.NewReader(os.Stdin)

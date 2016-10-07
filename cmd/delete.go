@@ -24,23 +24,23 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// removeCmd represents the remove command
-var removeCmd = &cobra.Command{
-	Use:   "remove",
-	Short: "A brief description of your command",
+// deleteCmd represents the delete command
+var deleteCmd = &cobra.Command{
+	Use:   "delete",
+	Short: "Delete a saved location",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		workReader := bufio.NewReader(os.Stdin)
 
 		// Get location name
-		fmt.Print("Enter location name to remove: ")
+		fmt.Print("Enter location name to delete: ")
 		name, _ := workReader.ReadString('\n')
 		name = strings.TrimSpace(name)
 
-		utils.RemoveLocation(ConfigFile, name)
+		utils.DeleteLocation(ConfigFile, name)
 	},
 }
 
 func init() {
-	RootCmd.AddCommand(removeCmd)
+	RootCmd.AddCommand(deleteCmd)
 }
