@@ -24,7 +24,6 @@ var RootCmd = &cobra.Command{
 	Short: "Tool to get travel time",
 	Long:  ``,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		fmt.Println("prerun")
 		//Check if init file exists
 		usr, err := user.Current()
 		utils.Check(err)
@@ -95,6 +94,6 @@ func init() {
 	RootCmd.PersistentFlags().StringVarP(&from, "from", "f", "work", "Starting location name")
 	RootCmd.PersistentFlags().StringVarP(&to, "to", "t", "home", "Destination location name")
 	RootCmd.PersistentFlags().IntVarP(&numResults, "number", "n", 5, "How many commute times do you want?")
-	RootCmd.PersistentFlags().IntVarP(&interval, "interval", "i", 15, "What is the interval between each commute prediction?")
+	RootCmd.PersistentFlags().IntVarP(&interval, "interval", "i", 15, "How many minutes between each commute prediction?")
 
 }

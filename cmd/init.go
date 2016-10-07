@@ -23,10 +23,9 @@ var initCmd = &cobra.Command{
 		usr, err := user.Current()
 		utils.Check(err)
 
+		// Get work address
 		workReader := bufio.NewReader(os.Stdin)
 		fmt.Print("Enter work address: ")
-
-		// Get work address
 		workAddress, _ := workReader.ReadString('\n')
 		workAddress = strings.TrimSpace(workAddress)
 		work := directions.Location{
