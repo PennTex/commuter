@@ -58,6 +58,6 @@ commuter -f home -t gym
 
 ## Contributors
 
-#### Mario Harper
-#### John Stamatakos
+#### [Mario Harper](https://www.marioharper.me)
+#### [John Stamatakos](https://github.com/johnstamatakos)
 ##### Copyright 2016
