@@ -48,6 +48,8 @@ var RootCmd = &cobra.Command{
 		interval := int64(interval * minute)
 		var traveTime int64 // time leaving
 		var info directions.CommuteInfo
+		var shortest int = 0
+		var optimalTime string
 
 		commute := directions.Commute{
 			From: from,
@@ -57,7 +59,7 @@ var RootCmd = &cobra.Command{
 		fmt.Printf("\nCommute from %s to %s\n", commute.From.Name, commute.To.Name)
 		for i := 0; i < numResults; i++ {
 			var printTime string
-			traveTime = currTime + (interval * int64(i)) // time leaving
+			traveTime = currTime + (interval * int64(i))
 			info = commute.GetInfo(traveTime)
 			hr, min, sec := time.Unix(traveTime, 0).Clock()
 			amPm := "AM"
@@ -69,12 +71,25 @@ var RootCmd = &cobra.Command{
 				hr = 12
 			}
 
+			//Get best travel time out of printed results
+			if shortest == 0 || int(info.TotalDuration) < shortest {
+				fmt.Println("shortest called")
+				shortest = int(info.TotalDuration)
+				optimalTime = fmt.Sprintf("%d:%02d:%02d %s", hr, min, sec, amPm)
+			}
+
+			//Print results
 			if i == 0 {
 				printTime = "Now"
 			} else {
 				printTime = fmt.Sprintf("%d:%02d:%02d %s", hr, min, sec, amPm)
 			}
 			fmt.Printf("\n %s: %d minutes \n", printTime, int(info.TotalDuration))
+
+			//Print optimal time for commute based on results
+			if i == numResults-1 {
+				fmt.Printf("\nOptimal time for commute: %s at %d minutes \n\n", optimalTime, shortest)
+			}
 		}
 
 	},
