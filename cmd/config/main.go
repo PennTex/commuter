@@ -14,7 +14,17 @@ type Config struct {
 
 func GetConfig(configFile string) Config {
 	var config Config
-	f := getConfigFile(configFile)
+	var f *os.File
+	var err error
+
+	// create if not exists
+	if f, err = os.Open(configFile); err != nil {
+		f, err = os.Create(configFile)
+		if err != nil {
+			fmt.Printf("creating config file: %s \n", err.Error())
+			os.Exit(-1)
+		}
+	}
 
 	jsonParser := json.NewDecoder(f)
 
@@ -35,7 +45,13 @@ func GetConfig(configFile string) Config {
 }
 
 func SaveConfig(configFile string, config Config) {
-	f := getConfigFile(configFile)
+
+	// overrite current config file
+	f, err := os.Create(configFile)
+	if err != nil {
+		fmt.Printf("creating config file: %s \n", err.Error())
+		os.Exit(-1)
+	}
 
 	// convert config to json
 	configJSON, err := json.MarshalIndent(config, "", "  ")
@@ -54,20 +70,4 @@ func SaveConfig(configFile string, config Config) {
 
 	f.Sync()
 
-}
-
-/////////////////////////////////
-
-func getConfigFile(configFile string) *os.File {
-	var f *os.File
-	var err error
-
-	// if no config file, create it
-	f, err = os.Create(configFile)
-	if err != nil {
-		fmt.Printf("creating config file: %s \n", err.Error())
-		os.Exit(-1)
-	}
-
-	return f
 }
