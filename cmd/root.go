@@ -13,6 +13,7 @@ import (
 
 var Locations []directions.Location
 var ConfigFile string
+var Logger = utils.Logger{Logging: false}
 var cfgFile string
 var from string
 var to string
@@ -30,7 +31,8 @@ var RootCmd = &cobra.Command{
 		ConfigFile = fmt.Sprintf("%s/commuter-config.json", usr.HomeDir)
 
 		if cmd.Use != "init" {
-			if _, err := os.Stat(ConfigFile); os.IsNotExist(err) {
+
+			if fStat, err := os.Stat(ConfigFile); os.IsNotExist(err) || fStat.Size() == 0 {
 				fmt.Println("Please initialize Commuter by using the 'commuter init' command")
 				os.Exit(-1)
 			}

@@ -60,8 +60,6 @@ func SaveConfig(configFile string, config Config) {
 		os.Exit(-1)
 	}
 
-	fmt.Println(string(configJSON))
-
 	// write json to config file
 	_, err = f.WriteString(string(configJSON))
 	if err != nil {
