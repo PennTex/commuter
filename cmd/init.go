@@ -2,10 +2,8 @@ package cmd
 
 import (
 	"bufio"
-	"encoding/json"
 	"fmt"
 	"os"
-	"os/user"
 	"strings"
 
 	"github.com/marioharper/commuter/cmd/utils"
@@ -18,10 +16,6 @@ var initCmd = &cobra.Command{
 	Short: "Init your commuter",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		var addresses []directions.Location
-
-		usr, err := user.Current()
-		utils.Check(err)
 
 		workReader := bufio.NewReader(os.Stdin)
 		fmt.Print("Enter work address: ")
@@ -33,7 +27,7 @@ var initCmd = &cobra.Command{
 			Name:    "work",
 			Address: workAddress,
 		}
-		addresses = append(addresses, work)
+		utils.AddLocation(ConfigFile, work)
 
 		// Get home address
 		homeReader := bufio.NewReader(os.Stdin)
@@ -44,17 +38,7 @@ var initCmd = &cobra.Command{
 			Name:    "home",
 			Address: homeAddress,
 		}
-		addresses = append(addresses, home)
-
-		// To JSON
-		addressesJSON, _ := json.Marshal(addresses)
-
-		// Write to config file
-		f, err := os.Create(fmt.Sprintf("%s/commuter-config.json", usr.HomeDir))
-		utils.Check(err)
-		w := bufio.NewWriter(f)
-		w.WriteString(string(addressesJSON))
-		w.Flush()
+		utils.AddLocation(ConfigFile, home)
 	},
 }
 

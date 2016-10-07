@@ -1,10 +1,7 @@
 package utils
 
 import (
-	"encoding/json"
-	"fmt"
-	"os"
-
+	"github.com/marioharper/commuter/cmd/config"
 	"github.com/marioharper/commuter/directions"
 )
 
@@ -18,26 +15,15 @@ func RemoveLocation() {
 
 }
 
-func AddLocation() {
-
+func AddLocation(configFile string, location directions.Location) {
+	configS := config.GetConfig(configFile)
+	configS.Locations = append(configS.Locations, location)
+	config.SaveConfig(configFile, configS)
 }
 
 func GetLocations(configFile string) []directions.Location {
-
-	locations := []directions.Location{}
-
-	fmt.Println(configFile)
-	file, err := os.Open(configFile)
-	if err != nil {
-		fmt.Printf("opening config file", err.Error())
-	}
-
-	jsonParser := json.NewDecoder(file)
-	if err = jsonParser.Decode(&locations); err != nil {
-		fmt.Printf("parsing config file", err.Error())
-	}
-
-	return locations
+	config := config.GetConfig(configFile)
+	return config.Locations
 }
 
 func GetLocationByName(locations []directions.Location, name string) int {

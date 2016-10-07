@@ -24,8 +24,8 @@ var RootCmd = &cobra.Command{
 	Short: "Tool to get travel time",
 	Long:  ``,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		fmt.Println("prerun")
-		//Check if init file exists
+
+		// get config file location
 		usr, err := user.Current()
 		utils.Check(err)
 		ConfigFile = fmt.Sprintf("%s/commuter-config.json", usr.HomeDir)
