@@ -38,19 +38,17 @@ func SaveConfig(configFile string, config Config) {
 	f := getConfigFile(configFile)
 
 	// convert config to json
-	configJSON, err := json.Marshal(config)
+	configJSON, err := json.MarshalIndent(config, "", "  ")
 	if err != nil {
 		fmt.Printf("marshalling config file: %s \n", err.Error())
 		os.Exit(-1)
 	}
-	fmt.Println(string(configJSON))
 
 	// write json to config file
-	n4, err := f.WriteString(string(configJSON))
+	_, err = f.WriteString(string(configJSON))
 	if err != nil {
 		fmt.Printf(err.Error())
 	}
-	fmt.Printf("Wrote %d bytes \n", n4)
 
 	f.Sync()
 

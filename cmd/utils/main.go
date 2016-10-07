@@ -11,13 +11,20 @@ func Check(e error) {
 	}
 }
 
-func RemoveLocation() {
+func RemoveLocation(configFile string, locationName string) {
+	configS := config.GetConfig(configFile)
 
+	locationIdx := GetLocationByName(configS.Locations, locationName)
+	configS.Locations = append(configS.Locations[:locationIdx], configS.Locations[locationIdx+1:]...)
+
+	config.SaveConfig(configFile, configS)
 }
 
 func AddLocation(configFile string, location directions.Location) {
 	configS := config.GetConfig(configFile)
+
 	configS.Locations = append(configS.Locations, location)
+
 	config.SaveConfig(configFile, configS)
 }
 
