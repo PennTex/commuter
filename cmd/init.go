@@ -23,9 +23,6 @@ var initCmd = &cobra.Command{
 		usr, err := user.Current()
 		utils.Check(err)
 
-		f, err := os.Create(fmt.Sprintf("%s/commuter-config.json", usr.HomeDir))
-		utils.Check(err)
-
 		workReader := bufio.NewReader(os.Stdin)
 		fmt.Print("Enter work address: ")
 
@@ -53,6 +50,8 @@ var initCmd = &cobra.Command{
 		addressesJSON, _ := json.Marshal(addresses)
 
 		// Write to config file
+		f, err := os.Create(fmt.Sprintf("%s/commuter-config.json", usr.HomeDir))
+		utils.Check(err)
 		w := bufio.NewWriter(f)
 		w.WriteString(string(addressesJSON))
 		w.Flush()

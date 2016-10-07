@@ -11,46 +11,42 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var cfgFile string
-var From string
-var To string
 var Locations []directions.Location
-var Increments int32
+var ConfigFile string
+var cfgFile string
+var from string
+var to string
+var numResults int
+var interval int
 
 var RootCmd = &cobra.Command{
 	Use:   "commuter",
 	Short: "Tool to get travel time",
 	Long:  ``,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		home := directions.Location{
-			Name:    "home",
-			Address: "4424 Gaines Ranch Loop, Austin, TX",
-		}
-
-		work := directions.Location{
-			Name:    "work",
-			Address: "1835 Kramer Ln, Austin, TX 78758",
-		}
-
-		Locations = append(Locations, home)
-		Locations = append(Locations, work)
-
+		fmt.Println("prerun")
 		//Check if init file exists
 		usr, err := user.Current()
 		utils.Check(err)
-		if _, err := os.Stat(fmt.Sprintf("%s/commuter-config.json", usr.HomeDir)); os.IsNotExist(err) && cmd.Use != "init" {
-			fmt.Println("Please initialize Commuter by using the 'commuter init' command")
-			os.Exit(-1)
+		ConfigFile = fmt.Sprintf("%s/commuter-config.json", usr.HomeDir)
+
+		if cmd.Use != "init" {
+			if _, err := os.Stat(ConfigFile); os.IsNotExist(err) {
+				fmt.Println("Please initialize Commuter by using the 'commuter init' command")
+				os.Exit(-1)
+			}
+
+			Locations = (utils.GetLocations(ConfigFile))
 		}
 
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		from := Locations[getLocationByName(Locations, From)]
-		to := Locations[getLocationByName(Locations, To)]
+		from := Locations[utils.GetLocationByName(Locations, from)]
+		to := Locations[utils.GetLocationByName(Locations, to)]
 		currTime := time.Now().Unix()
 		minute := 60
-		increment := int64(15 * minute)
+		interval := int64(interval * minute)
 		var traveTime int64 // time leaving
 		var info directions.CommuteInfo
 
@@ -60,9 +56,9 @@ var RootCmd = &cobra.Command{
 		}
 
 		fmt.Printf("\nCommute from %s to %s\n", commute.From.Name, commute.To.Name)
-		for i := 0; i < 5; i++ {
+		for i := 0; i < numResults; i++ {
 			var printTime string
-			traveTime = currTime + (increment * int64(i)) // time leaving
+			traveTime = currTime + (interval * int64(i)) // time leaving
 			info = commute.GetInfo(traveTime)
 			hr, min, sec := time.Unix(traveTime, 0).Clock()
 			amPm := "AM"
@@ -85,17 +81,6 @@ var RootCmd = &cobra.Command{
 	},
 }
 
-func getLocationByName(locations []directions.Location, name string) int {
-
-	for idx, location := range locations {
-		if location.Name == name {
-			return idx
-		}
-	}
-
-	return -1
-}
-
 func Execute() {
 
 	if err := RootCmd.Execute(); err != nil {
@@ -107,7 +92,9 @@ func Execute() {
 
 func init() {
 
-	RootCmd.PersistentFlags().StringVarP(&From, "from", "f", "work", "Starting location name")
-	RootCmd.PersistentFlags().StringVarP(&To, "to", "t", "home", "Destination location name")
+	RootCmd.PersistentFlags().StringVarP(&from, "from", "f", "work", "Starting location name")
+	RootCmd.PersistentFlags().StringVarP(&to, "to", "t", "home", "Destination location name")
+	RootCmd.PersistentFlags().IntVarP(&numResults, "number", "n", 5, "How many commute times do you want?")
+	RootCmd.PersistentFlags().IntVarP(&interval, "interval", "i", 15, "What is the interval between each commute prediction?")
 
 }
