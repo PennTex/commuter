@@ -9,7 +9,7 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "Get a list of your current available locations",
+	Short: "List saved location",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Work your own magic here
