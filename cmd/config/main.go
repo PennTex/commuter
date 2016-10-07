@@ -22,7 +22,6 @@ func GetConfig(configFile string) Config {
 		fmt.Printf("getting file stat: %s \n", err.Error())
 	} else {
 		if fi.Size() == 0 {
-			fmt.Println("config file empty")
 			return config
 		}
 	}
@@ -36,15 +35,7 @@ func GetConfig(configFile string) Config {
 }
 
 func SaveConfig(configFile string, config Config) {
-	fmt.Println("saving config")
 	f := getConfigFile(configFile)
-
-	// get file size
-	if data, err := f.Stat(); err != nil {
-		fmt.Printf("error gettings specs")
-	} else {
-		fmt.Printf("file size: %d \n", data.Size())
-	}
 
 	// convert config to json
 	configJSON, err := json.Marshal(config)
@@ -62,13 +53,6 @@ func SaveConfig(configFile string, config Config) {
 	fmt.Printf("Wrote %d bytes \n", n4)
 
 	f.Sync()
-
-	// Get file size
-	if data, err := f.Stat(); err != nil {
-		fmt.Printf("error gettings specs")
-	} else {
-		fmt.Printf("file size: %d \n", data.Size())
-	}
 
 }
 

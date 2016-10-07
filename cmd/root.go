@@ -73,7 +73,6 @@ var RootCmd = &cobra.Command{
 
 			//Get best travel time out of printed results
 			if shortest == 0 || int(info.TotalDuration) < shortest {
-				fmt.Println("shortest called")
 				shortest = int(info.TotalDuration)
 				optimalTime = fmt.Sprintf("%d:%02d:%02d %s", hr, min, sec, amPm)
 			}
