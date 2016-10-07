@@ -44,6 +44,8 @@ func SaveConfig(configFile string, config Config) {
 		os.Exit(-1)
 	}
 
+	fmt.Println(string(configJSON))
+
 	// write json to config file
 	_, err = f.WriteString(string(configJSON))
 	if err != nil {
@@ -61,12 +63,10 @@ func getConfigFile(configFile string) *os.File {
 	var err error
 
 	// if no config file, create it
-	if f, err = os.OpenFile(configFile, os.O_RDWR, 0666); os.IsNotExist(err) {
-		f, err = os.Create(configFile)
-		if err != nil {
-			fmt.Printf("creating config file: %s \n", err.Error())
-			os.Exit(-1)
-		}
+	f, err = os.Create(configFile)
+	if err != nil {
+		fmt.Printf("creating config file: %s \n", err.Error())
+		os.Exit(-1)
 	}
 
 	return f

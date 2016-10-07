@@ -15,7 +15,10 @@ func DeleteLocation(configFile string, locationName string) {
 	configS := config.GetConfig(configFile)
 
 	locationIdx := GetLocationByName(configS.Locations, locationName)
-	configS.Locations = append(configS.Locations[:locationIdx], configS.Locations[locationIdx+1:]...)
+
+	configS.Locations[locationIdx] = configS.Locations[len(configS.Locations)-1]
+	configS.Locations[len(configS.Locations)-1] = directions.Location{}
+	configS.Locations = configS.Locations[:len(configS.Locations)-1]
 
 	config.SaveConfig(configFile, configS)
 }
