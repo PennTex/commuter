@@ -56,6 +56,7 @@ func TestConfig_New(t *testing.T) {
 
 	theConfig := config.New(configFile)
 	assert.Equal(t, theConfig.File, configFile)
+	assert.Equal(t, theConfig.Config.Locations, locations)
 }
 
 func TestConfig_GetLocations(t *testing.T) {
