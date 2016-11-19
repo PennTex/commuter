@@ -145,4 +145,5 @@ func TestConfig_AddLocation(t *testing.T) {
 
 	theConfig.AddLocation(newLocation)
 	assert.Equal(t, theConfig.Config.Locations[0], newLocation)
+	assert.Equal(t, len(theConfig.Config.Locations), 1)
 }
