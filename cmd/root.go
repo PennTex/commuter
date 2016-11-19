@@ -6,15 +6,15 @@ import (
 	"os/user"
 	"time"
 
+	"github.com/marioharper/commuter/cmd/config"
 	"github.com/marioharper/commuter/cmd/utils"
 	"github.com/marioharper/commuter/directions"
 	"github.com/spf13/cobra"
 )
 
-var Locations []directions.Location
-var ConfigFile string
+var Config config.ConfigManager
 var Logger = utils.Logger{Logging: false}
-var cfgFile string
+var configFile string
 var from string
 var to string
 var numResults int
@@ -28,23 +28,32 @@ var RootCmd = &cobra.Command{
 		// get config file location
 		usr, err := user.Current()
 		utils.Check(err)
-		ConfigFile = fmt.Sprintf("%s/commuter-config.json", usr.HomeDir)
+		configFile = fmt.Sprintf("%s/commuter-config.json", usr.HomeDir)
 
 		if cmd.Use != "init" {
 
-			if fStat, err := os.Stat(ConfigFile); os.IsNotExist(err) || fStat.Size() == 0 {
+			if fStat, err := os.Stat(configFile); os.IsNotExist(err) || fStat.Size() == 0 {
 				fmt.Println("Please initialize Commuter by using the 'commuter init' command")
 				os.Exit(-1)
 			}
 
-			Locations = (utils.GetLocations(ConfigFile))
+			Config = config.New(configFile)
 		}
 
 	},
 	Run: func(cmd *cobra.Command, args []string) {
 
-		from := Locations[utils.GetLocationByName(Locations, from)]
-		to := Locations[utils.GetLocationByName(Locations, to)]
+		from, err := Config.GetLocationByName(from)
+		if err != nil {
+			fmt.Printf(err.Error())
+			panic(err)
+		}
+		to, err := Config.GetLocationByName(to)
+		if err != nil {
+			fmt.Printf(err.Error())
+			panic(err)
+		}
+
 		currTime := time.Now().Unix()
 		minute := 60
 		interval := int64(interval * minute)
@@ -109,7 +118,7 @@ func init() {
 
 	RootCmd.PersistentFlags().StringVarP(&from, "from", "f", "work", "Starting location name")
 	RootCmd.PersistentFlags().StringVarP(&to, "to", "t", "home", "Destination location name")
-	RootCmd.PersistentFlags().IntVarP(&numResults, "number", "n", 5, "How many commute times do you want?")
-	RootCmd.PersistentFlags().IntVarP(&interval, "interval", "i", 15, "How many minutes between each commute prediction?")
+	RootCmd.Flags().IntVarP(&numResults, "number", "n", 5, "How many commute times do you want?")
+	RootCmd.Flags().IntVarP(&interval, "interval", "i", 15, "How many minutes between each commute prediction?")
 
 }

@@ -6,7 +6,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/marioharper/commuter/cmd/utils"
 	"github.com/marioharper/commuter/directions"
 	"github.com/spf13/cobra"
 )
@@ -48,7 +47,7 @@ V___________:|          |: |========================|    :|          |:   _-"
 			Name:    "work",
 			Address: workAddress,
 		}
-		utils.AddLocation(ConfigFile, work)
+		Config.AddLocation(work)
 
 		// Get home address
 		homeReader := bufio.NewReader(os.Stdin)
@@ -59,7 +58,7 @@ V___________:|          |: |========================|    :|          |:   _-"
 			Name:    "home",
 			Address: homeAddress,
 		}
-		utils.AddLocation(ConfigFile, home)
+		Config.AddLocation(home)
 	},
 }
 

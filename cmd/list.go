@@ -13,7 +13,7 @@ var listCmd = &cobra.Command{
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: Work your own magic here
-		for idx, location := range Locations {
+		for idx, location := range Config.GetLocations() {
 			fmt.Printf("%d) %s - %s\n", idx+1, location.Name, location.Address)
 		}
 	},

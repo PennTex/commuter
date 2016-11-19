@@ -6,7 +6,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/marioharper/commuter/cmd/utils"
 	"github.com/marioharper/commuter/directions"
 	"github.com/spf13/cobra"
 )
@@ -36,7 +35,7 @@ var addCmd = &cobra.Command{
 		}
 
 		// Save location to config
-		utils.AddLocation(ConfigFile, work)
+		Config.AddLocation(work)
 	},
 }
 
