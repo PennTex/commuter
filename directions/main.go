@@ -24,6 +24,8 @@ type Commute struct {
 type CommuteInfo struct {
 	TotalDistance int
 	TotalDuration float64
+	Lat           float64
+	Lng           float64
 }
 
 func (c *Commute) GetInfo(travelTime int64) CommuteInfo {
@@ -46,15 +48,21 @@ func (c *Commute) GetInfo(travelTime int64) CommuteInfo {
 
 	totalDistance := 0
 	totalDuration := 0.00
+	lat := 0.00
+	lng := 0.00
 	legs := resp[0].Legs
 
 	for _, leg := range legs {
 		totalDistance += leg.Distance.Meters
 		totalDuration += leg.DurationInTraffic.Minutes()
+		lat += leg.StartLocation.Lat
+		lng += leg.StartLocation.Lng
 	}
 
 	info.TotalDistance = totalDistance
 	info.TotalDuration = totalDuration
+	info.Lat = lat
+	info.Lng = lng
 
 	return info
 }

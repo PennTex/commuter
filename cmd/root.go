@@ -9,6 +9,7 @@ import (
 	"github.com/marioharper/commuter/cmd/config"
 	"github.com/marioharper/commuter/cmd/utils"
 	"github.com/marioharper/commuter/directions"
+	"github.com/marioharper/commuter/weather"
 	"github.com/spf13/cobra"
 )
 
@@ -61,6 +62,8 @@ var RootCmd = &cobra.Command{
 		var info directions.CommuteInfo
 		var shortest int = 0
 		var optimalTime string
+		var bestHour int
+		amPm := "AM"
 
 		commute := directions.Commute{
 			From: from,
@@ -73,7 +76,6 @@ var RootCmd = &cobra.Command{
 			traveTime = currTime + (interval * int64(i))
 			info = commute.GetInfo(traveTime)
 			hr, min, sec := time.Unix(traveTime, 0).Clock()
-			amPm := "AM"
 
 			if hr > 12 {
 				hr -= 12
@@ -86,6 +88,7 @@ var RootCmd = &cobra.Command{
 			if shortest == 0 || int(info.TotalDuration) < shortest {
 				shortest = int(info.TotalDuration)
 				optimalTime = fmt.Sprintf("%d:%02d:%02d %s", hr, min, sec, amPm)
+				bestHour = hr
 			}
 
 			//Print results
@@ -98,9 +101,14 @@ var RootCmd = &cobra.Command{
 
 			//Print optimal time for commute based on results
 			if i == numResults-1 {
-				fmt.Printf("\nOptimal time for commute: %s at %d minutes \n\n", optimalTime, shortest)
+				fmt.Printf("\nOptimal time for commute: %s at %d minutes \n", optimalTime, shortest)
 			}
 		}
+
+		//Print Weather Info
+		var commuteWeather = weather.GetInfo(bestHour, amPm, info.Lat, info.Lng)
+		fmt.Println("\nWeather for your commute:")
+		fmt.Printf("Summary: %v \nTemperature: %v° F \nWind Speed: %v MPH \nChance Of Rain: %v%% \n\n", commuteWeather.Summary, commuteWeather.Temp, commuteWeather.Wind, commuteWeather.PrecipProbability)
 
 	},
 }
