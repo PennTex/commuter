@@ -46,7 +46,7 @@ func GetInfo(idealTime int, AMPM string, latitude float64, longitude float64) We
 		if hr == idealTime {
 			info.Summary = value.Summary
 			info.Temp = value.Temperature
-			info.PrecipProbability = value.PrecipProbability
+			info.PrecipProbability = (value.PrecipProbability * 100)
 			info.Wind = value.WindSpeed
 			break
 		}
