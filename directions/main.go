@@ -2,14 +2,14 @@ package directions
 
 import (
 	"log"
-	"os"
 	"strconv"
 
 	"golang.org/x/net/context"
 	"googlemaps.github.io/maps"
 )
 
-var mapsAPIKey = os.Getenv("MAPS_API_KEY")
+// supplied via -ldflags in Makefile
+var MAPS_API_KEY = ""
 
 type Location struct {
 	Name    string
@@ -32,7 +32,7 @@ func (c *Commute) GetInfo(travelTime int64) CommuteInfo {
 
 	var info CommuteInfo
 
-	client, err := maps.NewClient(maps.WithAPIKey(mapsAPIKey))
+	client, err := maps.NewClient(maps.WithAPIKey(MAPS_API_KEY))
 	if err != nil {
 		log.Fatalf("fatal error: %s", err)
 	}

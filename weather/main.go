@@ -8,6 +8,9 @@ import (
 	forecast "github.com/mlbright/forecast/v2"
 )
 
+// supplied via -ldflags in Makefile
+var DARK_SKY_API_KEY = ""
+
 type WeatherInfo struct {
 	Summary           string
 	PrecipProbability float64
@@ -17,19 +20,16 @@ type WeatherInfo struct {
 
 func GetInfo(idealTime int, AMPM string, latitude float64, longitude float64) WeatherInfo {
 
-	//TO DO: Remove API Key
-
 	var info WeatherInfo
 	if AMPM == "PM" {
 		idealTime += 12
 	}
 
-	key := "b11889839cd3dc8090e0f510afbe82d5"
 	lat := strconv.FormatFloat(latitude, 'f', 6, 64)
 	lng := strconv.FormatFloat(longitude, 'f', 6, 64)
 
 	//Get forecast for commute starting point
-	f, err := forecast.Get(key, lat, lng, "now", forecast.US)
+	f, err := forecast.Get(DARK_SKY_API_KEY, lat, lng, "now", forecast.US)
 	if err != nil {
 		log.Fatal(err)
 	}
