@@ -7,7 +7,6 @@ Ever wonder how long your commute home in traffic is going to take?  Commuter is
 
 ## Installation
 
-To install, all you need is a Google Directions API key:
 * [Click here](https://github.com/marioharper/commuter/releases) and download the latest commuter binary.
 * Ensure the binary is added to your $PATH.
 
