@@ -32,6 +32,15 @@ commuter add
 commuter delete
 ```
 
+#### To view your commute in google maps:
+```sh
+# for default values(work -> home)
+commuter view 
+
+# for specific
+commuter view -f home -t work
+```
+
 #### Options:
 * number: specify number of future commutes to show (default: 5)
 ```sh
