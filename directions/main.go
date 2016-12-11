@@ -1,8 +1,10 @@
 package directions
 
 import (
+	"fmt"
 	"log"
 	"strconv"
+	"strings"
 
 	"golang.org/x/net/context"
 	"googlemaps.github.io/maps"
@@ -65,4 +67,10 @@ func (c *Commute) GetInfo(travelTime int64) CommuteInfo {
 	info.Lng = lng
 
 	return info
+}
+
+func (c *Commute) GetMapsURL() string {
+	from := strings.Replace(c.From.Address, " ", "+", -1)
+	to := strings.Replace(c.To.Address, " ", "+", -1)
+	return fmt.Sprintf("https://www.google.com/maps/dir/%s/%s", from, to)
 }
