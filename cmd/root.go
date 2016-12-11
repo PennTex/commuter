@@ -38,8 +38,9 @@ var RootCmd = &cobra.Command{
 				os.Exit(-1)
 			}
 
-			Config = config.New(configFile)
 		}
+
+		Config = config.New(configFile)
 
 	},
 	Run: func(cmd *cobra.Command, args []string) {
