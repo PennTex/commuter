@@ -12,7 +12,7 @@ Ever wonder how long your commute home in traffic is going to take?  Commuter is
 
 You're now ready to use Commuter!
 
-## Code Example
+## Usage
 
 #### To use commuter you must first initialize the tool:
 ```sh
