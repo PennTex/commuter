@@ -67,13 +67,16 @@ var RootCmd = &cobra.Command{
 		var shortest int = 0
 		var optimalTime string
 		var bestHour int
+		today := true
 		amPm := "AM"
 		commuteTime = time.Now().Unix()
 
 		if start != "" {
-			now := time.Now()
-			currentYear, monthString, _ := now.Date()
-			currentMonth := int(monthString)
+			//Current time
+			currentYear, m, _ := time.Now().Date()
+			currentMonth := int(m)
+
+			//Start time
 			s := strings.Split(start, ":")
 			startDate, startTime := s[0], s[1]
 			startMonth, _ := strconv.Atoi(startDate[0:2])
@@ -86,8 +89,12 @@ var RootCmd = &cobra.Command{
 			startDay, _ := strconv.Atoi(startDate[2:4])
 			startHour, _ := strconv.Atoi(startTime[0:2])
 			startMinute, _ := strconv.Atoi(startTime[2:4])
-			fmt.Println(startYear, startMonth, startDay, startHour, startMinute)
-			commuteTime = time.Date(startYear, time.Month(startMonth), startDay, startHour, startMinute, 0, 0, time.UTC).Unix()
+			if strings.Contains(startTime, "PM") {
+				startHour += 12
+			}
+
+			today = false
+			commuteTime = time.Date(startYear, time.Month(startMonth), startDay, startHour, startMinute, 0, 0, time.Local).Unix()
 		}
 
 		commute := directions.Commute{
@@ -117,7 +124,7 @@ var RootCmd = &cobra.Command{
 			}
 
 			//Print results
-			if i == 0 {
+			if i == 0 && today == true {
 				printTime = "Now"
 			} else {
 				printTime = fmt.Sprintf("%d:%02d:%02d %s", hr, min, sec, amPm)
