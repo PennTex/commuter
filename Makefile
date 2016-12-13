@@ -5,7 +5,7 @@ build:
 .PHONY: build 
 
 install:
-	go install ${LDFLAGS}
+	go install ${LDFLAGS} ./...
 .PHONY: install
 
 run:
