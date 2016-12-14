@@ -42,20 +42,33 @@ commuter view -f home -t work
 ```
 
 #### Options:
-* number: specify number of future commutes to show (default: 5)
+**number**: specify number of future commutes to show (default: 5)
 ```sh
 commuter -n 20
 ```
-* interval: specify time between commute results in minutes (default: 15)
-```
+
+**interval**: specify time between commute results in minutes (default: 15)
+```sh
 commuter -n 20 -i 10
 ```
-* from/to: specify which locations you which to use (default: work/home) 
-```
+**from/to**: specify which locations you which to use (default: work/home) 
+```sh
 commuter -f work -t store
 ```
-```
+```sh
 commuter -f home -t gym
+```
+**start**: specify when you will start your commute. Future times only. (default: current time)
+
+Two syntaxs are accepted:
+* MMDD:HHMM 24 hour clock example: 0712:1632 = July 12th 4:32PM
+* MMDD:HHMM(AM|PM) 12 hour clock example: 0712:0432PM = July 12th 4:43PM
+```sh
+# start December 14th 4:00PM
+commuter -s 1214:1600
+
+# start December 14th 4:00PM
+commuter -s 1215:400PM
 ```
 
 ## Contributors
