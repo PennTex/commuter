@@ -68,7 +68,7 @@ Two syntaxs are accepted:
 commuter -s 1214:1600
 
 # start December 14th 4:00PM
-commuter -s 1215:400PM
+commuter -s 1215:0400PM
 ```
 
 ## Contributors
