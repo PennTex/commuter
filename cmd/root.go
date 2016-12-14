@@ -59,7 +59,6 @@ var RootCmd = &cobra.Command{
 			panic(err)
 		}
 
-		var commuteTime int64
 		minute := 60
 		interval := int64(interval * minute)
 		var traveTime int64 // time leaving
@@ -67,34 +66,11 @@ var RootCmd = &cobra.Command{
 		var shortest int = 0
 		var optimalTime string
 		var bestHour int
-		today := true
 		amPm := "AM"
-		commuteTime = time.Now().Unix()
+		commuteTime := time.Now().Unix()
 
 		if start != "" {
-			//Current time
-			currentYear, m, _ := time.Now().Date()
-			currentMonth := int(m)
-
-			//Start time
-			s := strings.Split(start, ":")
-			startDate, startTime := s[0], s[1]
-			startMonth, _ := strconv.Atoi(startDate[0:2])
-			var startYear int
-			if currentMonth > startMonth {
-				startYear = currentYear + 1
-			} else {
-				startYear = currentYear
-			}
-			startDay, _ := strconv.Atoi(startDate[2:4])
-			startHour, _ := strconv.Atoi(startTime[0:2])
-			startMinute, _ := strconv.Atoi(startTime[2:4])
-			if strings.Contains(startTime, "PM") {
-				startHour += 12
-			}
-
-			today = false
-			commuteTime = time.Date(startYear, time.Month(startMonth), startDay, startHour, startMinute, 0, 0, time.Local).Unix()
+			commuteTime = _formatDateInput()
 		}
 
 		commute := directions.Commute{
@@ -124,7 +100,7 @@ var RootCmd = &cobra.Command{
 			}
 
 			//Print results
-			if i == 0 && today == true {
+			if i == 0 && start == "" {
 				printTime = "Now"
 			} else {
 				printTime = fmt.Sprintf("%d:%02d:%02d %s", hr, min, sec, amPm)
@@ -158,8 +134,33 @@ func init() {
 
 	RootCmd.PersistentFlags().StringVarP(&from, "from", "f", "work", "Starting location name")
 	RootCmd.PersistentFlags().StringVarP(&to, "to", "t", "home", "Destination location name")
+	RootCmd.PersistentFlags().StringVarP(&start, "start", "s", "", "Starting commute time (1219:1330 or 1219:0130PM = December 19th at 1:30PM)")
 	RootCmd.Flags().IntVarP(&numResults, "number", "n", 5, "How many commute times do you want?")
 	RootCmd.Flags().IntVarP(&interval, "interval", "i", 15, "How many minutes between each commute prediction?")
-	RootCmd.Flags().StringVarP(&start, "start", "s", "", "Starting commute time (1219:1330 or 1219:0130PM = December 19th at 1:30PM)")
 
+}
+
+func _formatDateInput() int64 {
+	//Current time
+	currentYear, m, _ := time.Now().Date()
+	currentMonth := int(m)
+
+	//Start time
+	s := strings.Split(start, ":")
+	startDate, startTime := s[0], s[1]
+	startMonth, _ := strconv.Atoi(startDate[0:2])
+	var startYear int
+	if currentMonth > startMonth {
+		startYear = currentYear + 1
+	} else {
+		startYear = currentYear
+	}
+	startDay, _ := strconv.Atoi(startDate[2:4])
+	startHour, _ := strconv.Atoi(startTime[0:2])
+	startMinute, _ := strconv.Atoi(startTime[2:4])
+	if strings.Contains(startTime, "PM") {
+		startHour += 12
+	}
+
+	return time.Date(startYear, time.Month(startMonth), startDay, startHour, startMinute, 0, 0, time.Local).Unix()
 }
