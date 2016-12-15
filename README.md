@@ -62,7 +62,7 @@ commuter -f home -t gym
 
 Two syntaxs are accepted:
 * MMDD:HHMM 24 hour clock example: 0712:1632 = July 12th 4:32PM
-* MMDD:HHMM(AM|PM) 12 hour clock example: 0712:0432PM = July 12th 4:43PM
+* MMDD:HHMM(AM|PM) 12 hour clock example: 0712:0432PM = July 12th 4:32PM
 ```sh
 # start December 14th 4:00PM
 commuter -s 1214:1600
