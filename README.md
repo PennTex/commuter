@@ -58,6 +58,7 @@ commuter -f work -t store
 ```sh
 commuter -f home -t gym
 ```
+####Coming in 0.3 Release:
 **start**: specify when you will start your commute. Future times only. (default: current time)
 
 Two syntaxs are accepted:
