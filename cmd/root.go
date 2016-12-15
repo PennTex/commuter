@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/user"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/marioharper/commuter/cmd/config"
@@ -18,11 +16,14 @@ import (
 var Config config.ConfigManager
 var Logger = utils.Logger{Logging: false}
 var configFile string
+var commute directions.Commute
+
 var from string
 var to string
 var numResults int
 var interval int
 var start string
+var commuteTime int64
 
 var RootCmd = &cobra.Command{
 	Use:   "commuter",
@@ -35,19 +36,15 @@ var RootCmd = &cobra.Command{
 		configFile = fmt.Sprintf("%s/commuter-config.json", usr.HomeDir)
 
 		if cmd.Use != "init" {
-
 			if fStat, err := os.Stat(configFile); os.IsNotExist(err) || fStat.Size() == 0 {
 				fmt.Println("Please initialize Commuter by using the 'commuter init' command")
 				os.Exit(-1)
 			}
-
 		}
 
 		Config = config.New(configFile)
 
-	},
-	Run: func(cmd *cobra.Command, args []string) {
-
+		// setup commute object
 		from, err := Config.GetLocationByName(from)
 		if err != nil {
 			fmt.Printf(err.Error())
@@ -59,29 +56,32 @@ var RootCmd = &cobra.Command{
 			panic(err)
 		}
 
+		commuteTime = time.Now().Unix() // default
+
+		if start != "" {
+			commuteTime = utils.FormatDateInput(start)
+		}
+
+		commute = directions.Commute{
+			From: from,
+			To:   to,
+			Time: commuteTime,
+		}
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+
 		minute := 60
 		interval := int64(interval * minute)
-		var traveTime int64 // time leaving
 		var info directions.CommuteInfo
 		var shortest int = 0
 		var optimalTime string
 		var bestHour int
 		amPm := "AM"
-		commuteTime := time.Now().Unix()
-
-		if start != "" {
-			commuteTime = _formatDateInput()
-		}
-
-		commute := directions.Commute{
-			From: from,
-			To:   to,
-		}
 
 		fmt.Printf("\nCommute from %s to %s\n", commute.From.Name, commute.To.Name)
 		for i := 0; i < numResults; i++ {
 			var printTime string
-			traveTime = commuteTime + (interval * int64(i))
+			traveTime := commuteTime + (interval * int64(i))
 			info = commute.GetInfo(traveTime)
 			hr, min, sec := time.Unix(traveTime, 0).Clock()
 
@@ -114,10 +114,9 @@ var RootCmd = &cobra.Command{
 		}
 
 		//Print Weather Info
-		var commuteWeather = weather.GetInfo(bestHour, amPm, info.Lat, info.Lng)
+		commuteWeather := weather.GetInfo(bestHour, amPm, info.Lat, info.Lng)
 		fmt.Println("\nWeather for your commute:")
 		fmt.Printf("Summary: %v \nTemperature: %v° F \nWind Speed: %v MPH \nChance Of Rain: %v%% \n\n", commuteWeather.Summary, commuteWeather.Temp, commuteWeather.Wind, commuteWeather.PrecipProbability)
-
 	},
 }
 
@@ -138,29 +137,4 @@ func init() {
 	RootCmd.Flags().IntVarP(&numResults, "number", "n", 5, "How many commute times do you want?")
 	RootCmd.Flags().IntVarP(&interval, "interval", "i", 15, "How many minutes between each commute prediction?")
 
-}
-
-func _formatDateInput() int64 {
-	//Current time
-	currentYear, m, _ := time.Now().Date()
-	currentMonth := int(m)
-
-	//Start time
-	s := strings.Split(start, ":")
-	startDate, startTime := s[0], s[1]
-	startMonth, _ := strconv.Atoi(startDate[0:2])
-	var startYear int
-	if currentMonth > startMonth {
-		startYear = currentYear + 1
-	} else {
-		startYear = currentYear
-	}
-	startDay, _ := strconv.Atoi(startDate[2:4])
-	startHour, _ := strconv.Atoi(startTime[0:2])
-	startMinute, _ := strconv.Atoi(startTime[2:4])
-	if strings.Contains(startTime, "PM") {
-		startHour += 12
-	}
-
-	return time.Date(startYear, time.Month(startMonth), startDay, startHour, startMinute, 0, 0, time.Local).Unix()
 }
