@@ -10,6 +10,38 @@ import (
 	"github.com/spf13/cobra"
 )
 
+func getLocationName(reader *bufio.Reader) string {
+	name := ""
+
+	for name == "" {
+		fmt.Print("Enter location name: ")
+		name, _ = reader.ReadString('\n')
+		name = strings.TrimSpace(name)
+
+		if name == "" {
+			fmt.Println("Please supply a value for the location's name.")
+		}
+	}
+
+	return name
+}
+
+func getLocationAddress(reader *bufio.Reader) string {
+	address := ""
+
+	for address == "" {
+		fmt.Print("Enter location address: ")
+		address, _ = reader.ReadString('\n')
+		address = strings.TrimSpace(address)
+
+		if address == "" {
+			fmt.Println("Please supply a value for the location's address.")
+		}
+	}
+
+	return address
+}
+
 // addCmd represents the add command
 var addCmd = &cobra.Command{
 	Use:   "add",
@@ -18,23 +50,11 @@ var addCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		workReader := bufio.NewReader(os.Stdin)
 
-		// Get location
-		fmt.Print("Enter location name: ")
-		name, _ := workReader.ReadString('\n')
-		name = strings.TrimSpace(name)
-
-		// Get address
-		fmt.Print("Enter location address: ")
-		address, _ := workReader.ReadString('\n')
-		address = strings.TrimSpace(address)
-
-		// Create location
 		work := directions.Location{
-			Name:    name,
-			Address: address,
+			Name:    getLocationName(workReader),
+			Address: getLocationAddress(workReader),
 		}
 
-		// Save location to config
 		Config.AddLocation(work)
 	},
 }
