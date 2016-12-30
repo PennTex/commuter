@@ -130,6 +130,27 @@ func TestConfig_DeleteLocation(t *testing.T) {
 	assert.Equal(t, theConfig.GetLocations(), expectedLocations)
 }
 
+func TestConfig_DeleteLocation_InvalidLocation(t *testing.T) {
+	var locations = []directions.Location{
+		directions.Location{
+			Name:    "work",
+			Address: "1600 Amphitheatre Pkwy, Mountain View, CA 94043",
+		},
+		directions.Location{
+			Name:    "home",
+			Address: "1060 North Rengstorff Avenue, Mountain View, CA 94043",
+		},
+	}
+	var configMock = config.Config{
+		Locations: locations,
+	}
+	setup(configMock)
+
+	theConfig := config.New(configFile)
+	theConfig.DeleteLocation("i'm not real")
+	assert.Equal(t, theConfig.GetLocations(), locations)
+}
+
 func TestConfig_AddLocation(t *testing.T) {
 	var locations = []directions.Location{}
 	var configMock = config.Config{

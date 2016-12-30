@@ -22,14 +22,12 @@ func New(file string) ConfigManager {
 }
 
 func (cm *ConfigManager) DeleteLocation(locationName string) {
-
-	locationIdx := getLocationIdxByName(cm.Config.Locations, locationName)
-
-	cm.Config.Locations[locationIdx] = cm.Config.Locations[len(cm.Config.Locations)-1]
-	cm.Config.Locations[len(cm.Config.Locations)-1] = directions.Location{}
-	cm.Config.Locations = cm.Config.Locations[:len(cm.Config.Locations)-1]
-
-	cm.saveConfig()
+	if locationIdx := getLocationIdxByName(cm.Config.Locations, locationName); locationIdx >= 0 {
+		cm.Config.Locations[locationIdx] = cm.Config.Locations[len(cm.Config.Locations)-1]
+		cm.Config.Locations[len(cm.Config.Locations)-1] = directions.Location{}
+		cm.Config.Locations = cm.Config.Locations[:len(cm.Config.Locations)-1]
+		cm.saveConfig()
+	}
 }
 
 func (cm *ConfigManager) AddLocation(location directions.Location) {
