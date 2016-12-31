@@ -18,32 +18,26 @@ type WeatherInfo struct {
 	Wind              float64
 }
 
-func GetInfo(idealTime int, AMPM string, latitude float64, longitude float64) WeatherInfo {
-
+func GetInfo(idealTime int, latitude float64, longitude float64) WeatherInfo {
 	var info WeatherInfo
-	if AMPM == "PM" {
-		idealTime += 12
-	}
+	idealTimeHr, _, _ := time.Unix(int64(idealTime), 0).Clock()
 
 	lat := strconv.FormatFloat(latitude, 'f', 6, 64)
 	lng := strconv.FormatFloat(longitude, 'f', 6, 64)
 
-	//Get forecast for commute starting point
-	f, err := forecast.Get(DARK_SKY_API_KEY, lat, lng, "now", forecast.US)
+	f, err := forecast.Get(DARK_SKY_API_KEY, lat, lng, strconv.Itoa(idealTime), forecast.US)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, value := range f.Hourly.Data {
-		var weatherHour = strconv.FormatFloat(value.Time, 'f', 0, 64)
-		weatherHourInt, err := strconv.ParseInt(weatherHour, 10, 64)
-		hr, _, _ := time.Unix(weatherHourInt, 0).Clock()
+		hr, _, _ := time.Unix(int64(value.Time), 0).Clock()
 
 		if err != nil {
 			panic(err)
 		}
 
-		if hr == idealTime {
+		if hr == idealTimeHr {
 			info.Summary = value.Summary
 			info.Temp = value.Temperature
 			info.PrecipProbability = (value.PrecipProbability * 100)

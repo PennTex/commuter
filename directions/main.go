@@ -19,29 +19,38 @@ type Location struct {
 }
 
 type Commute struct {
-	From Location
-	To   Location
-	Time int64
-}
-
-type CommuteInfo struct {
+	From          Location
+	To            Location
+	Time          int64
 	TotalDistance int
 	TotalDuration float64
 	Lat           float64
 	Lng           float64
 }
 
-func (c *Commute) GetInfo(travelTime int64) CommuteInfo {
+func NewCommute(from Location, to Location, time int64) Commute {
+	totalDistance, totalDuration, lat, lng := getInfo(from, to, time)
 
-	var info CommuteInfo
+	return Commute{
+		From:          from,
+		To:            to,
+		Time:          time,
+		TotalDistance: totalDistance,
+		TotalDuration: totalDuration,
+		Lat:           lat,
+		Lng:           lng,
+	}
+}
+
+func getInfo(from Location, to Location, travelTime int64) (int, float64, float64, float64) {
 
 	client, err := maps.NewClient(maps.WithAPIKey(MAPS_API_KEY))
 	if err != nil {
 		log.Fatalf("fatal error: %s", err)
 	}
 	r := &maps.DirectionsRequest{
-		Origin:        c.From.Address,
-		Destination:   c.To.Address,
+		Origin:        from.Address,
+		Destination:   to.Address,
 		DepartureTime: strconv.FormatInt(travelTime, 10),
 	}
 	resp, _, err := client.Directions(context.Background(), r)
@@ -62,12 +71,7 @@ func (c *Commute) GetInfo(travelTime int64) CommuteInfo {
 		lng += leg.StartLocation.Lng
 	}
 
-	info.TotalDistance = totalDistance
-	info.TotalDuration = totalDuration
-	info.Lat = lat
-	info.Lng = lng
-
-	return info
+	return totalDistance, totalDuration, lat, lng
 }
 
 func (c *Commute) GetMapsURL() string {

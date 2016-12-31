@@ -47,3 +47,7 @@ func FormatDateInput(dateInput string) int64 {
 
 	return time.Date(startYear, time.Month(startMonth), startDay, startHour, startMinute, 0, 0, time.Local).Unix()
 }
+
+func to12Hr() {
+
+}
