@@ -10,13 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var initCmd = &cobra.Command{
-	Use:   "init",
-	Short: "Init your commuter",
-	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
-
-		var logo = `                                                                                                        
+var logo = `                                                                                                        
  ██████╗ ██████╗ ███╗   ███╗███╗   ███╗██╗   ██╗████████╗███████╗██████╗ 
 ██╔════╝██╔═══██╗████╗ ████║████╗ ████║██║   ██║╚══██╔══╝██╔════╝██╔══██╗
 ██║     ██║   ██║██╔████╔██║██╔████╔██║██║   ██║   ██║   █████╗  ██████╔╝
@@ -36,28 +30,44 @@ V___________:|          |: |========================|    :|          |:   _-"
  -----------'  ""____""  '-------------------------------'  ""____""                                                                                                                                               
 		`
 
+func getAddressLocationFromUser(location *directions.Location, reader *bufio.Reader) {
+	location.Address = ""
+
+	for location.Address == "" {
+		fmt.Printf("Enter %s address: ", location.Name)
+		location.Address, _ = reader.ReadString('\n')
+		location.Address = strings.TrimSpace(location.Address)
+
+		if location.Address == "" {
+			fmt.Printf("Please provide a %s address. \n", location.Name)
+		}
+	}
+}
+
+var initCmd = &cobra.Command{
+	Use:   "init",
+	Short: "Init your commuter",
+	Long:  ``,
+	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Printf("\n\n %s \n\n", logo)
 
-		// Get work address
-		workReader := bufio.NewReader(os.Stdin)
-		fmt.Print("Enter work address: ")
-		workAddress, _ := workReader.ReadString('\n')
-		workAddress = strings.TrimSpace(workAddress)
-		work := directions.Location{
-			Name:    "work",
-			Address: workAddress,
+		if i := Config.GetLocations(); len(i) > 0 {
+			fmt.Println("Looks like you've already initialized commuter! \nTry `$ commuter list` to view your stored locations.")
+			return
 		}
+
+		workReader := bufio.NewReader(os.Stdin)
+
+		work := directions.Location{
+			Name: "work",
+		}
+		getAddressLocationFromUser(&work, workReader)
 		Config.AddLocation(work)
 
-		// Get home address
-		homeReader := bufio.NewReader(os.Stdin)
-		fmt.Print("Enter home address: ")
-		homeAddress, _ := homeReader.ReadString('\n')
-		homeAddress = strings.TrimSpace(homeAddress)
 		home := directions.Location{
-			Name:    "home",
-			Address: homeAddress,
+			Name: "home",
 		}
+		getAddressLocationFromUser(&home, workReader)
 		Config.AddLocation(home)
 	},
 }
