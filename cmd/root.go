@@ -52,7 +52,11 @@ func createCommute(fromLocationName string, toLocationName string, start string)
 	}
 
 	if start != "" {
-		commuteTime = utils.FormatDateInput(start)
+		commuteTime, err = utils.FormatDateInput(start)
+		if err != nil {
+			fmt.Printf(err.Error())
+			os.Exit(-1)
+		}
 	} else {
 		commuteTime = time.Now().Unix() // default
 	}
