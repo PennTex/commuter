@@ -2,9 +2,10 @@ package directions
 
 import (
 	"fmt"
-	"log"
 	"strconv"
 	"strings"
+
+	"github.com/marioharper/commuter/cmd/utils"
 
 	"golang.org/x/net/context"
 	"googlemaps.github.io/maps"
@@ -43,20 +44,16 @@ func NewCommute(from Location, to Location, time int64) Commute {
 }
 
 func getInfo(from Location, to Location, travelTime int64) (int, float64, float64, float64) {
-
 	client, err := maps.NewClient(maps.WithAPIKey(MAPS_API_KEY))
-	if err != nil {
-		log.Fatalf("fatal error: %s", err)
-	}
+	utils.Check(err)
+
 	r := &maps.DirectionsRequest{
 		Origin:        from.Address,
 		Destination:   to.Address,
 		DepartureTime: strconv.FormatInt(travelTime, 10),
 	}
 	resp, _, err := client.Directions(context.Background(), r)
-	if err != nil {
-		log.Fatalf("fatal error: %s", err)
-	}
+	utils.Check(err)
 
 	totalDistance := 0
 	totalDuration := 0.00
@@ -80,4 +77,18 @@ func (c *Commute) GetMapsURL() string {
 	url := fmt.Sprintf("https://www.google.com/maps/dir/%s/%s", from, to)
 
 	return url
+}
+
+func AddressIsValid(address string) bool {
+	client, err := maps.NewClient(maps.WithAPIKey(MAPS_API_KEY))
+	utils.Check(err)
+
+	a := &maps.GeocodingRequest{
+		Address: address,
+	}
+	_, error := client.Geocode(context.Background(), a)
+	if error != nil {
+		return false
+	}
+	return true
 }

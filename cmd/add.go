@@ -34,8 +34,13 @@ func getLocationAddress(reader *bufio.Reader) string {
 		address, _ = reader.ReadString('\n')
 		address = strings.TrimSpace(address)
 
+		validAddress := directions.AddressIsValid(address)
+		if !validAddress {
+			address = ""
+		}
+
 		if address == "" {
-			fmt.Println("Please supply a value for the location's address.")
+			fmt.Println("Please supply a valid address for the location.")
 		}
 	}
 
