@@ -3,6 +3,7 @@
 
 ## Synopsis
 
+
 Ever wonder how long your commute home in traffic is going to take?  Commuter is a CLI tool that will tell you what your commute looks like now and in the future.
 
 ## Installation
