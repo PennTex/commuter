@@ -8,7 +8,7 @@ Ever wonder how long your commute home in traffic is going to take?  Commuter is
 
 ## Installation
 
-* [Click here](https://github.com/marioharper/commuter/releases) and download the latest commuter binary.
+* [Click here](https://github.com/PennTex/commuter/releases) and download the latest commuter binary.
 * Ensure the binary is added to your $PATH.
 
 You're now ready to use Commuter!
@@ -74,6 +74,6 @@ commuter -s 1215:0400PM
 
 ## Contributors
 
-#### [Mario Harper](https://www.marioharper.me)
+#### [Mario Harper](https://www.PennTex.me)
 #### [John Stamatakos](https://github.com/johnstamatakos)
 ##### Copyright 2016

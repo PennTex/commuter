@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/marioharper/commuter/cmd/utils"
+	"github.com/PennTex/commuter/cmd/utils"
 
 	"golang.org/x/net/context"
 	"googlemaps.github.io/maps"
