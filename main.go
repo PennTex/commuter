@@ -1,6 +1,6 @@
 package main
 
-import "github.com/marioharper/commuter/cmd"
+import "github.com/PennTex/commuter/cmd"
 
 func main() {
 	cmd.Execute()

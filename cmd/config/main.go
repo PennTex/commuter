@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/marioharper/commuter/directions"
+	"github.com/PennTex/commuter/directions"
 )
 
 type Config struct {

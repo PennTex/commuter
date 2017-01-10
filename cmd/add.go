@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/marioharper/commuter/directions"
+	"github.com/PennTex/commuter/directions"
 	"github.com/spf13/cobra"
 )
 

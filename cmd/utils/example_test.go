@@ -1,6 +1,6 @@
 package utils_test
 
-import "github.com/marioharper/commuter/cmd/utils"
+import "github.com/PennTex/commuter/cmd/utils"
 
 func ExampleLogger_Log_withLogging() {
 	var logger utils.Logger

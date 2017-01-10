@@ -6,10 +6,10 @@ import (
 	"os/user"
 	"time"
 
-	"github.com/marioharper/commuter/cmd/config"
-	"github.com/marioharper/commuter/cmd/utils"
-	"github.com/marioharper/commuter/directions"
-	"github.com/marioharper/commuter/weather"
+	"github.com/PennTex/commuter/cmd/config"
+	"github.com/PennTex/commuter/cmd/utils"
+	"github.com/PennTex/commuter/directions"
+	"github.com/PennTex/commuter/weather"
 	"github.com/spf13/cobra"
 )
 

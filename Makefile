@@ -1,4 +1,4 @@
-LDFLAGS=-ldflags "-X github.com/marioharper/commuter/directions.MAPS_API_KEY=$(MAPS_API_KEY) -X github.com/marioharper/commuter/weather.DARK_SKY_API_KEY=$(DARK_SKY_API_KEY)"
+LDFLAGS=-ldflags "-X github.com/PennTex/commuter/directions.MAPS_API_KEY=$(MAPS_API_KEY) -X github.com/PennTex/commuter/weather.DARK_SKY_API_KEY=$(DARK_SKY_API_KEY)"
 
 build: 
 	@gox ${LDFLAGS} -os="linux darwin windows openbsd" -output="./dist/{{.Dir}}_{{.OS}}_{{.Arch}}" ./...

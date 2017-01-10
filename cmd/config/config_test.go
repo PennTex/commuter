@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/marioharper/commuter/cmd/config"
-	"github.com/marioharper/commuter/directions"
+	"github.com/PennTex/commuter/cmd/config"
+	"github.com/PennTex/commuter/directions"
 	"github.com/stretchr/testify/assert"
 )
 
