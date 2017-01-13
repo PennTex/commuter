@@ -2,14 +2,20 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"time"
 )
 
-func Check(e error) {
+func ProcessError(e error, errorString string) {
 	if e != nil {
-		panic(e)
+		if errorString != "" {
+			fmt.Printf("%s: %s \n", errorString, e.Error())
+			os.Exit(-1)
+		} else {
+			panic(e)
+		}
 	}
 }
 

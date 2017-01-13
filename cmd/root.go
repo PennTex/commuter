@@ -41,15 +41,9 @@ func formatTime(unixTimeStamp int64) string {
 
 func createCommute(fromLocationName string, toLocationName string, start string) directions.Commute {
 	from, err := Config.GetLocationByName(fromLocationName)
-	if err != nil {
-		fmt.Printf(err.Error())
-		panic(err)
-	}
+	utils.ProcessError(err, "Getting location by name")
 	to, err := Config.GetLocationByName(toLocationName)
-	if err != nil {
-		fmt.Printf(err.Error())
-		panic(err)
-	}
+	utils.ProcessError(err, "Getting location by name")
 
 	if start != "" {
 		if len(start) > 6 {
@@ -57,10 +51,7 @@ func createCommute(fromLocationName string, toLocationName string, start string)
 		} else {
 			commuteTime, err = utils.FormatTimeInput(start)
 		}
-		if err != nil {
-			fmt.Printf(err.Error())
-			os.Exit(-1)
-		}
+		utils.ProcessError(err, "Formatting time")
 	} else {
 		commuteTime = time.Now().Unix() // default
 	}
@@ -121,7 +112,7 @@ var RootCmd = &cobra.Command{
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		// get config file location
 		usr, err := user.Current()
-		utils.Check(err)
+		utils.ProcessError(err, "")
 		configFile = fmt.Sprintf("%s/commuter-config.json", usr.HomeDir)
 
 		if cmd.Use != "init" {
@@ -149,8 +140,7 @@ var RootCmd = &cobra.Command{
 
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(-1)
+		utils.ProcessError(err, "")
 	}
 }
 

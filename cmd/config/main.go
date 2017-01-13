@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/PennTex/commuter/cmd/utils"
 	"github.com/PennTex/commuter/directions"
 )
 
@@ -76,16 +77,13 @@ func getConfig(configFile string) Config {
 	// create if not exists
 	if f, err = os.Open(configFile); err != nil {
 		f, err = os.Create(configFile)
-		if err != nil {
-			fmt.Printf("creating config file: %s \n", err.Error())
-			os.Exit(-1)
-		}
+		utils.ProcessError(err, "Creating config file")
 	}
 
 	jsonParser := json.NewDecoder(f)
 
 	if fi, err := f.Stat(); err != nil {
-		fmt.Printf("getting file stat: %s \n", err.Error())
+		utils.ProcessError(err, "Getting file stat")
 	} else {
 		if fi.Size() == 0 {
 			return theConfig
@@ -93,8 +91,7 @@ func getConfig(configFile string) Config {
 	}
 
 	if err := jsonParser.Decode(&theConfig); err != nil {
-		fmt.Printf("parsing config file: %s \n", err.Error())
-		os.Exit(-1)
+		utils.ProcessError(err, "Parsing config file")
 	}
 
 	return theConfig
@@ -103,23 +100,15 @@ func getConfig(configFile string) Config {
 func (cm *ConfigManager) saveConfig() {
 	// overrite current config file
 	f, err := os.Create(cm.File)
-	if err != nil {
-		fmt.Printf("creating config file: %s \n", err.Error())
-		os.Exit(-1)
-	}
+	utils.ProcessError(err, "Creating config file")
 
 	// convert config to json
 	configJSON, err := json.MarshalIndent(cm.Config, "", "  ")
-	if err != nil {
-		fmt.Printf("marshalling config file: %s \n", err.Error())
-		os.Exit(-1)
-	}
+	utils.ProcessError(err, "Marshalling config file")
 
 	// write json to config file
 	_, err = f.WriteString(string(configJSON))
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
+	utils.ProcessError(err, "Writing to JSON file")
 
 	f.Sync()
 }
