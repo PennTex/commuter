@@ -2,11 +2,11 @@ package config_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
 	"testing"
 
 	"github.com/PennTex/commuter/cmd/config"
+	"github.com/PennTex/commuter/cmd/utils"
 	"github.com/PennTex/commuter/directions"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,23 +16,15 @@ var configFile = "_fixtures/temp_config.json"
 func setup(configMock config.Config) {
 	// create test config file
 	f, err := os.Create(configFile)
-	if err != nil {
-		fmt.Printf("creating config file: %s \n", err.Error())
-		os.Exit(-1)
-	}
+	utils.ProcessError(err, "Creating config file")
 
 	// convert config to json
 	configJSON, err := json.MarshalIndent(configMock, "", "  ")
-	if err != nil {
-		fmt.Printf("marshalling config file: %s \n", err.Error())
-		os.Exit(-1)
-	}
+	utils.ProcessError(err, "Marshalling config file")
 
 	// write json to config file
 	_, err = f.WriteString(string(configJSON))
-	if err != nil {
-		fmt.Printf(err.Error())
-	}
+	utils.ProcessError(err, "Writing to JSON file")
 
 	f.Sync()
 	f.Close()
@@ -97,9 +89,8 @@ func TestConfig_GetLocationByName(t *testing.T) {
 
 	theConfig := config.New(configFile)
 	retrievedLocation, err := theConfig.GetLocationByName("work")
-	if err != nil {
-		panic(err)
-	}
+	utils.ProcessError(err, "")
+
 	assert.Equal(t, retrievedLocation, locations[0])
 }
 

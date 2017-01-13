@@ -45,7 +45,7 @@ func NewCommute(from Location, to Location, time int64) Commute {
 
 func getInfo(from Location, to Location, travelTime int64) (int, float64, float64, float64) {
 	client, err := maps.NewClient(maps.WithAPIKey(MAPS_API_KEY))
-	utils.Check(err)
+	utils.ProcessError(err, "New maps client")
 
 	r := &maps.DirectionsRequest{
 		Origin:        from.Address,
@@ -53,7 +53,7 @@ func getInfo(from Location, to Location, travelTime int64) (int, float64, float6
 		DepartureTime: strconv.FormatInt(travelTime, 10),
 	}
 	resp, _, err := client.Directions(context.Background(), r)
-	utils.Check(err)
+	utils.ProcessError(err, "Getting directions")
 
 	totalDistance := 0
 	totalDuration := 0.00
@@ -81,7 +81,7 @@ func (c *Commute) GetMapsURL() string {
 
 func AddressIsValid(address string) bool {
 	client, err := maps.NewClient(maps.WithAPIKey(MAPS_API_KEY))
-	utils.Check(err)
+	utils.ProcessError(err, "Invalid API Key")
 
 	a := &maps.GeocodingRequest{
 		Address: address,

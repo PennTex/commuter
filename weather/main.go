@@ -1,10 +1,10 @@
 package weather
 
 import (
-	"log"
 	"strconv"
 	"time"
 
+	"github.com/PennTex/commuter/cmd/utils"
 	forecast "github.com/mlbright/forecast/v2"
 )
 
@@ -26,16 +26,10 @@ func GetInfo(idealTime int, latitude float64, longitude float64) WeatherInfo {
 	lng := strconv.FormatFloat(longitude, 'f', 6, 64)
 
 	f, err := forecast.Get(DARK_SKY_API_KEY, lat, lng, strconv.Itoa(idealTime), forecast.US)
-	if err != nil {
-		log.Fatal(err)
-	}
+	utils.ProcessError(err, "Getting forecast")
 
 	for _, value := range f.Hourly.Data {
 		hr, _, _ := time.Unix(int64(value.Time), 0).Clock()
-
-		if err != nil {
-			panic(err)
-		}
 
 		if hr == idealTimeHr {
 			info.Summary = value.Summary
