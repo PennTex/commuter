@@ -1,74 +1,86 @@
 package directions_test
 
 import (
-	"encoding/json"
-	"fmt"
-	"os"
+	"errors"
+	"reflect"
 	"testing"
-	"time"
 
-	"github.com/PennTex/commuter/cmd/config"
-	"github.com/PennTex/commuter/cmd/utils"
 	"github.com/PennTex/commuter/directions"
 )
 
-type Location struct {
-	Name    string
-	Address string
+type FakeCommuteInfoer struct {
+	Info *directions.CommuteInfo
+	Err  error
 }
 
-type Commute struct {
-	From          Location
-	To            Location
-	Time          int64
-	TotalDistance int
-	TotalDuration float64
-	Lat           float64
-	Lng           float64
+func (f FakeCommuteInfoer) GetCommuteInfo(from directions.Location, to directions.Location, time int64) (*directions.CommuteInfo, error) {
+	if f.Err != nil {
+		return nil, f.Err
+	}
+
+	return f.Info, nil
 }
-
-var configFile = "../cmd/config/_fixtures/temp_config.json"
-
-func setup(configMock config.Config) {
-	// create test config file
-	f, err := os.Create(configFile)
-	utils.ProcessError(err, "Creating config file")
-
-	// convert config to json
-	configJSON, err := json.MarshalIndent(configMock, "", "  ")
-	utils.ProcessError(err, "Marshalling config file")
-
-	// write json to config file
-	_, err = f.WriteString(string(configJSON))
-	utils.ProcessError(err, "Writing to JSON file")
-
-	f.Sync()
-	f.Close()
-}
-
-func TestCreateCommute(t *testing.T) {
-	var locations = []directions.Location{
-		directions.Location{
-			Name:    "work",
-			Address: "1600 Amphitheatre Pkwy, Mountain View, CA 94043",
+func TestCommute_New(t *testing.T) {
+	cases := []struct {
+		f               FakeCommuteInfoer
+		from            *directions.Location
+		to              *directions.Location
+		time            int64
+		expectedCommute *directions.Commute
+	}{
+		{
+			f: FakeCommuteInfoer{
+				Info: &directions.CommuteInfo{
+					TotalDistance: 0,
+					TotalDuration: 0,
+					Lat:           0,
+					Lng:           0,
+				},
+				Err: nil,
+			},
+			from: &directions.Location{},
+			to:   &directions.Location{},
+			time: 0,
+			expectedCommute: &directions.Commute{
+				From: directions.Location{},
+				To:   directions.Location{},
+				Time: 0,
+				CommuteInfo: &directions.CommuteInfo{
+					TotalDistance: 0,
+					TotalDuration: 0,
+					Lat:           0,
+					Lng:           0,
+				},
+			},
 		},
-		directions.Location{
-			Name:    "home",
-			Address: "1060 North Rengstorff Avenue, Mountain View, CA 94043",
+		{
+			f: FakeCommuteInfoer{
+				Info: &directions.CommuteInfo{
+					TotalDistance: 0,
+					TotalDuration: 0,
+					Lat:           0,
+					Lng:           0,
+				},
+				Err: errors.New("Error getting commute info"),
+			},
+			from:            &directions.Location{},
+			to:              &directions.Location{},
+			time:            0,
+			expectedCommute: nil,
 		},
 	}
-	var configMock = config.Config{
-		Locations: locations,
+
+	for _, c := range cases {
+		commute, err := directions.NewCommute(c.f, *c.from, *c.to, c.time)
+
+		if c.f.Err != nil {
+			if err == nil {
+				t.Errorf("The code did not error")
+			}
+		} else {
+			if !reflect.DeepEqual(commute, c.expectedCommute) {
+				t.Errorf("Expected commute to be %q but it was %q", c.expectedCommute, commute)
+			}
+		}
 	}
-	setup(configMock)
-	var now = time.Now().Unix()
-
-	theConfig := config.New(configFile)
-
-	from, _ := theConfig.GetLocationByName("work")
-	to, _ := theConfig.GetLocationByName("home")
-
-	commute := directions.NewCommute(from, to, now)
-
-	fmt.Println(commute)
 }

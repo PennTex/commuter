@@ -16,7 +16,8 @@ import (
 var Config config.ConfigManager
 var Logger = utils.Logger{Logging: false}
 var configFile string
-var commute directions.Commute
+var commute *directions.Commute
+var commuteInfoer directions.GoogleMapsCommuteInfoer
 
 var from string
 var to string
@@ -39,7 +40,7 @@ func formatTime(unixTimeStamp int64) string {
 	return fmt.Sprintf("%d:%02d:%02d %s", hr, min, sec, amPm)
 }
 
-func createCommute(fromLocationName string, toLocationName string, start string) directions.Commute {
+func createCommute(fromLocationName string, toLocationName string, start string) *directions.Commute {
 	from, err := Config.GetLocationByName(fromLocationName)
 	utils.ProcessError(err, "Getting location by name")
 	to, err := Config.GetLocationByName(toLocationName)
@@ -56,24 +57,34 @@ func createCommute(fromLocationName string, toLocationName string, start string)
 		commuteTime = time.Now().Unix() // default
 	}
 
-	return directions.NewCommute(from, to, commuteTime)
+	commute, err := directions.NewCommute(commuteInfoer, from, to, commuteTime)
+
+	if err != nil {
+		utils.ProcessError(err, err.Error())
+	}
+
+	return commute
 }
 
-func getPossibleCommutes(commute directions.Commute, minuteInterval int) []directions.Commute {
+func getPossibleCommutes(commute *directions.Commute, minuteInterval int) []directions.Commute {
 	var allCommutes []directions.Commute
 	interval := int64(minuteInterval * 60)
 
 	for i := 0; i < numResults; i++ {
 		travelTime := commuteTime + (interval * int64(i))
-		newCommute := directions.NewCommute(commute.From, commute.To, travelTime)
+		newCommute, err := directions.NewCommute(commuteInfoer, commute.From, commute.To, travelTime)
 
-		allCommutes = append(allCommutes, newCommute)
+		if err != nil {
+			utils.ProcessError(err, err.Error())
+		}
+
+		allCommutes = append(allCommutes, *newCommute)
 	}
 
 	return allCommutes
 }
 
-func getShortestCommute(commutes []directions.Commute) directions.Commute {
+func getShortestCommute(commutes []directions.Commute) *directions.Commute {
 	var shortest directions.Commute
 
 	for _, commute := range commutes {
@@ -82,7 +93,7 @@ func getShortestCommute(commutes []directions.Commute) directions.Commute {
 		}
 	}
 
-	return shortest
+	return &shortest
 }
 
 func printCommuteTimes(commutes []directions.Commute) {
@@ -99,7 +110,7 @@ func printCommuteTimes(commutes []directions.Commute) {
 	}
 }
 
-func printWeatherInfo(commute directions.Commute) {
+func printWeatherInfo(commute *directions.Commute) {
 	//Print Weather Info
 	commuteWeather := weather.GetInfo(int(commute.Time), commute.Lat, commute.Lng)
 	fmt.Printf("Summary: %v \nTemperature: %v° F \nWind Speed: %v MPH \nChance Of Rain: %v%% \n\n", commuteWeather.Summary, commuteWeather.Temp, commuteWeather.Wind, commuteWeather.PrecipProbability)

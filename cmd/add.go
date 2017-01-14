@@ -26,7 +26,7 @@ func getLocationName(reader *bufio.Reader) string {
 	return name
 }
 
-func getLocationAddress(reader *bufio.Reader) string {
+func getLocationAddress(addressValidator directions.AddressValidator, reader *bufio.Reader) string {
 	address := ""
 
 	for address == "" {
@@ -34,7 +34,8 @@ func getLocationAddress(reader *bufio.Reader) string {
 		address, _ = reader.ReadString('\n')
 		address = strings.TrimSpace(address)
 
-		validAddress := directions.AddressIsValid(address)
+		validAddress := addressValidator.IsValidAddress(address)
+
 		if !validAddress {
 			address = ""
 		}
@@ -53,11 +54,12 @@ var addCmd = &cobra.Command{
 	Short: "Add a saved location",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		addressValidator := directions.GoogleMapsAddressValidator{}
 		workReader := bufio.NewReader(os.Stdin)
 
 		work := directions.Location{
 			Name:    getLocationName(workReader),
-			Address: getLocationAddress(workReader),
+			Address: getLocationAddress(addressValidator, workReader),
 		}
 
 		Config.AddLocation(work)
