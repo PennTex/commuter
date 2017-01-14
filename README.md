@@ -8,8 +8,18 @@ Ever wonder how long your commute home in traffic is going to take?  Commuter is
 
 ## Installation
 
-* [Click here](https://github.com/PennTex/commuter/releases) and download the latest commuter binary.
-* Ensure the binary is added to your $PATH.
+On macOS, Linux, or OpenBSD run the following:
+
+```
+curl https://raw.githubusercontent.com/PennTex/commuter/master/install.sh | sh
+```
+
+Note that you may need to run the `sudo` version below, or alternatively chown `/usr/local`:
+```
+curl https://raw.githubusercontent.com/PennTex/commuter/master/install.sh | sudo sh
+```
+
+On Windows download [binary](https://github.com/PennTex/commuter/releases).
 
 You're now ready to use Commuter!
 
