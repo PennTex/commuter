@@ -18,6 +18,7 @@ var Logger = utils.Logger{Logging: false}
 var configFile string
 var commute *directions.Commute
 var commuteInfoer directions.GoogleMapsCommuteInfoer
+var weatherInfoer weather.DarkSkyWeatherInfoer
 
 var from string
 var to string
@@ -60,7 +61,7 @@ func createCommute(fromLocationName string, toLocationName string, start string)
 	commute, err := directions.NewCommute(commuteInfoer, from, to, commuteTime)
 
 	if err != nil {
-		utils.ProcessError(err, err.Error())
+		utils.ProcessError(err, "Error creating commute")
 	}
 
 	return commute
@@ -112,7 +113,11 @@ func printCommuteTimes(commutes []directions.Commute) {
 
 func printWeatherInfo(commute *directions.Commute) {
 	//Print Weather Info
-	commuteWeather := weather.GetInfo(int(commute.Time), commute.Lat, commute.Lng)
+	commuteWeather, err := weatherInfoer.GetWeatherInfo(int(commute.Time), commute.Lat, commute.Lng)
+	if err != nil {
+		utils.ProcessError(err, err.Error())
+	}
+
 	fmt.Printf("Summary: %v \nTemperature: %v° F \nWind Speed: %v MPH \nChance Of Rain: %v%% \n\n", commuteWeather.Summary, commuteWeather.Temp, commuteWeather.Wind, commuteWeather.PrecipProbability)
 }
 

@@ -1,7 +1,6 @@
 package directions
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 )
@@ -37,7 +36,7 @@ func NewCommute(infoer CommuteInfoer, from Location, to Location, time int64) (*
 	info, err := infoer.GetCommuteInfo(from, to, time)
 
 	if err != nil {
-		return nil, errors.New("Getting directions")
+		return nil, err
 	}
 
 	return &Commute{
