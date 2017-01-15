@@ -3,12 +3,12 @@ package config_test
 import (
 	"encoding/json"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/PennTex/commuter/cmd/config"
 	"github.com/PennTex/commuter/cmd/utils"
 	"github.com/PennTex/commuter/directions"
-	"github.com/stretchr/testify/assert"
 )
 
 var configFile = "_fixtures/temp_config.json"
@@ -44,11 +44,18 @@ func TestConfig_New(t *testing.T) {
 	var configMock = config.Config{
 		Locations: locations,
 	}
+
 	setup(configMock)
 
 	theConfig := config.New(configFile)
-	assert.Equal(t, theConfig.File, configFile)
-	assert.Equal(t, theConfig.Config.Locations, locations)
+
+	if !reflect.DeepEqual(theConfig.File, configFile) {
+		t.Errorf("Expected config file to be %q but it was %q", configFile, theConfig.File)
+	}
+
+	if !reflect.DeepEqual(theConfig.Config.Locations, locations) {
+		t.Errorf("Expected config locations to be %q but they were %q", locations, theConfig.Config.Locations)
+	}
 }
 
 func TestConfig_GetLocations(t *testing.T) {
@@ -65,10 +72,14 @@ func TestConfig_GetLocations(t *testing.T) {
 	var configMock = config.Config{
 		Locations: locations,
 	}
+
 	setup(configMock)
 
 	theConfig := config.New(configFile)
-	assert.Equal(t, theConfig.GetLocations(), locations)
+
+	if !reflect.DeepEqual(theConfig.GetLocations(), locations) {
+		t.Errorf("Expected locations to be %q but they were %q", locations, theConfig.GetLocations())
+	}
 }
 
 func TestConfig_GetLocationByName(t *testing.T) {
@@ -91,7 +102,9 @@ func TestConfig_GetLocationByName(t *testing.T) {
 	retrievedLocation, err := theConfig.GetLocationByName("work")
 	utils.ProcessError(err, "")
 
-	assert.Equal(t, retrievedLocation, locations[0])
+	if !reflect.DeepEqual(retrievedLocation, locations[0]) {
+		t.Errorf("Expected location to be %q but it was %q", locations[0], retrievedLocation)
+	}
 }
 
 func TestConfig_DeleteLocation(t *testing.T) {
@@ -118,7 +131,9 @@ func TestConfig_DeleteLocation(t *testing.T) {
 			Address: "1060 North Rengstorff Avenue, Mountain View, CA 94043",
 		},
 	}
-	assert.Equal(t, theConfig.GetLocations(), expectedLocations)
+	if !reflect.DeepEqual(theConfig.GetLocations(), expectedLocations) {
+		t.Errorf("Expected locations to be %q but they were %q", expectedLocations, theConfig.GetLocations())
+	}
 }
 
 func TestConfig_DeleteLocation_InvalidLocation(t *testing.T) {
@@ -139,7 +154,10 @@ func TestConfig_DeleteLocation_InvalidLocation(t *testing.T) {
 
 	theConfig := config.New(configFile)
 	theConfig.DeleteLocation("i'm not real")
-	assert.Equal(t, theConfig.GetLocations(), locations)
+
+	if !reflect.DeepEqual(theConfig.GetLocations(), locations) {
+		t.Errorf("Expected locations to be %q but they were %q", locations, theConfig.GetLocations())
+	}
 }
 
 func TestConfig_AddLocation(t *testing.T) {
@@ -156,6 +174,10 @@ func TestConfig_AddLocation(t *testing.T) {
 	}
 
 	theConfig.AddLocation(newLocation)
-	assert.Equal(t, theConfig.Config.Locations[0], newLocation)
-	assert.Equal(t, len(theConfig.Config.Locations), 1)
+	if !reflect.DeepEqual(theConfig.Config.Locations[0], newLocation) {
+		t.Errorf("Expected location to be %q but it was %q", newLocation, theConfig.Config.Locations[0])
+	}
+	if len(theConfig.Config.Locations) != 1 {
+		t.Errorf("Expected location lenght to be 1 but it was %d", len(theConfig.Config.Locations))
+	}
 }
