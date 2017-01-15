@@ -55,13 +55,8 @@ func TestCommute_New(t *testing.T) {
 		},
 		{
 			f: FakeCommuteInfoer{
-				Info: &directions.CommuteInfo{
-					TotalDistance: 0,
-					TotalDuration: 0,
-					Lat:           0,
-					Lng:           0,
-				},
-				Err: errors.New("Error getting commute info"),
+				Info: &directions.CommuteInfo{},
+				Err:  errors.New("Error getting commute info"),
 			},
 			from:            &directions.Location{},
 			to:              &directions.Location{},
@@ -82,5 +77,22 @@ func TestCommute_New(t *testing.T) {
 				t.Errorf("Expected commute to be %q but it was %q", c.expectedCommute, commute)
 			}
 		}
+	}
+}
+
+func TestCommute_GetMapsURL(t *testing.T) {
+	commute := directions.Commute{}
+	commute.From = directions.Location{
+		Address: "from-address",
+	}
+	commute.To = directions.Location{
+		Address: "to-address",
+	}
+
+	mapsURL := commute.GetMapsURL()
+	expectedURL := "https://www.google.com/maps/dir/from-address/to-address"
+
+	if mapsURL != expectedURL {
+		t.Errorf("Expected URL to be %s but it was %s", expectedURL, mapsURL)
 	}
 }
