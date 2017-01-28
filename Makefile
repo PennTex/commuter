@@ -12,6 +12,10 @@ run:
 	go run ${LDFLAGS} main.go
 .PHONY: run
 
+test: 
+	go test ./...
+.PHONY: test
+
 clean:
 	go clean
 .PHONY: clean
