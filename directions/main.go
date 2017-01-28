@@ -25,7 +25,7 @@ type Commute struct {
 }
 
 type AddressValidator interface {
-	IsValidAddress(address string) bool
+	IsValidAddress(address string) (bool, error)
 }
 
 type CommuteInfoer interface {

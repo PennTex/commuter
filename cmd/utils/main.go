@@ -1,17 +1,20 @@
 package utils
 
 import (
+	"bufio"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/PennTex/commuter/directions"
 )
 
 func ProcessError(e error, errorString string) {
 	if e != nil {
 		if errorString != "" {
-			fmt.Printf("%s: %s \n", errorString, e.Error())
+			fmt.Printf("ERROR - %s: %s \n", errorString, e.Error())
 			os.Exit(-1)
 		} else {
 			panic(e)
@@ -122,4 +125,43 @@ func FormatTimeInput(timeInput string) (int64, error) {
 
 	return time.Date(currentYear, time.Month(currentMonth), currentDay, startHour, startMinute, 0, 0, time.Local).Unix(), nil
 
+}
+
+func GetLocationNameFromUser(reader *bufio.Reader) string {
+	name := ""
+
+	for name == "" {
+		fmt.Print("Enter location name: ")
+		name, _ = reader.ReadString('\n')
+		name = strings.TrimSpace(name)
+
+		if name == "" {
+			fmt.Println("Please supply a value for the location's name.")
+		}
+	}
+
+	return name
+}
+
+func GetLocationAddressFromUser(addressValidator directions.AddressValidator, reader *bufio.Reader) string {
+	address := ""
+
+	for address == "" {
+		fmt.Print("Enter location address: ")
+		address, _ = reader.ReadString('\n')
+		address = strings.TrimSpace(address)
+
+		validAddress, err := addressValidator.IsValidAddress(address)
+		ProcessError(err, "Validating address.")
+
+		if !validAddress {
+			address = ""
+		}
+
+		if address == "" {
+			fmt.Println("Please supply a valid address for the location.")
+		}
+	}
+
+	return address
 }

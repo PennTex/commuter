@@ -129,19 +129,20 @@ var RootCmd = &cobra.Command{
 		// get config file location
 		usr, err := user.Current()
 		utils.ProcessError(err, "")
-		configFile = fmt.Sprintf("%s/commuter-config.json", usr.HomeDir)
+		configFile = fmt.Sprintf("%s/.commuter/config.json", usr.HomeDir)
 
 		if cmd.Use != "init" {
 			if fStat, err := os.Stat(configFile); os.IsNotExist(err) || fStat.Size() == 0 {
-				fmt.Println("Please initialize Commuter by using the 'commuter init' command")
-				return
+				fmt.Println("Commuter config not found. Please initialize Commuter by using the 'commuter init' command")
+				os.Exit(1)
 			}
 		}
 
 		Config = config.New(configFile)
-		commute = createCommute(from, to, start)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		commute = createCommute(from, to, start)
+
 		fmt.Printf("\nCommute from %s to %s\n", commute.From.Name, commute.To.Name)
 		allCommutes := getPossibleCommutes(commute, interval)
 		printCommuteTimes(allCommutes)

@@ -4,8 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 
+	"github.com/PennTex/commuter/cmd/utils"
 	"github.com/PennTex/commuter/directions"
 	"github.com/spf13/cobra"
 )
@@ -30,20 +30,6 @@ V___________:|          |: |========================|    :|          |:   _-"
  -----------'  ""____""  '-------------------------------'  ""____""                                                                                                                                               
 		`
 
-func getAddressLocationFromUser(location *directions.Location, reader *bufio.Reader) {
-	location.Address = ""
-
-	for location.Address == "" {
-		fmt.Printf("Enter %s address: ", location.Name)
-		location.Address, _ = reader.ReadString('\n')
-		location.Address = strings.TrimSpace(location.Address)
-
-		if location.Address == "" {
-			fmt.Printf("Please provide a %s address. \n", location.Name)
-		}
-	}
-}
-
 var initCmd = &cobra.Command{
 	Use:   "init",
 	Short: "Init your commuter",
@@ -57,17 +43,20 @@ var initCmd = &cobra.Command{
 		}
 
 		workReader := bufio.NewReader(os.Stdin)
+		addressValidator := directions.GoogleMapsAddressValidator{}
 
 		work := directions.Location{
-			Name: "work",
+			Name:    "work",
+			Address: utils.GetLocationAddressFromUser(addressValidator, workReader),
 		}
-		getAddressLocationFromUser(&work, workReader)
+
 		Config.AddLocation(work)
 
 		home := directions.Location{
-			Name: "home",
+			Name:    "home",
+			Address: utils.GetLocationAddressFromUser(addressValidator, workReader),
 		}
-		getAddressLocationFromUser(&home, workReader)
+
 		Config.AddLocation(home)
 	},
 }

@@ -4,7 +4,6 @@ import (
 	"context"
 	"strconv"
 
-	"github.com/PennTex/commuter/cmd/utils"
 	"googlemaps.github.io/maps"
 )
 
@@ -13,18 +12,20 @@ var MAPS_API_KEY = ""
 
 type GoogleMapsAddressValidator struct{}
 
-func (g GoogleMapsAddressValidator) IsValidAddress(address string) bool {
+func (g GoogleMapsAddressValidator) IsValidAddress(address string) (bool, error) {
 	client, err := maps.NewClient(maps.WithAPIKey(MAPS_API_KEY))
-	utils.ProcessError(err, "Invalid API Key")
+	if err != nil {
+		return false, err
+	}
 
 	a := &maps.GeocodingRequest{
 		Address: address,
 	}
-	_, error := client.Geocode(context.Background(), a)
-	if error != nil {
-		return false
+	_, err = client.Geocode(context.Background(), a)
+	if err != nil {
+		return false, err
 	}
-	return true
+	return true, nil
 }
 
 type GoogleMapsCommuteInfoer struct{}
