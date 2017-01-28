@@ -47,14 +47,14 @@ var initCmd = &cobra.Command{
 
 		work := directions.Location{
 			Name:    "work",
-			Address: utils.GetLocationAddressFromUser(addressValidator, workReader),
+			Address: utils.GetLocationAddressFromUser("work", addressValidator, workReader),
 		}
 
 		Config.AddLocation(work)
 
 		home := directions.Location{
 			Name:    "home",
-			Address: utils.GetLocationAddressFromUser(addressValidator, workReader),
+			Address: utils.GetLocationAddressFromUser("home", addressValidator, workReader),
 		}
 
 		Config.AddLocation(home)

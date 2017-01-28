@@ -57,7 +57,7 @@ func (cm *ConfigManager) GetLocationByName(name string) (directions.Location, er
 		}
 	}
 
-	return directions.Location{}, fmt.Errorf("Location %s not found.", name)
+	return directions.Location{}, fmt.Errorf("Location '%s' not found.", name)
 }
 
 func getLocationIdxByName(locations []directions.Location, name string) int {

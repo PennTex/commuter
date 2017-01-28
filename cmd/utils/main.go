@@ -143,11 +143,11 @@ func GetLocationNameFromUser(reader *bufio.Reader) string {
 	return name
 }
 
-func GetLocationAddressFromUser(addressValidator directions.AddressValidator, reader *bufio.Reader) string {
+func GetLocationAddressFromUser(addressName string, addressValidator directions.AddressValidator, reader *bufio.Reader) string {
 	address := ""
 
 	for address == "" {
-		fmt.Print("Enter location address: ")
+		fmt.Printf("Enter %s address: ", addressName)
 		address, _ = reader.ReadString('\n')
 		address = strings.TrimSpace(address)
 
@@ -159,7 +159,7 @@ func GetLocationAddressFromUser(addressValidator directions.AddressValidator, re
 		}
 
 		if address == "" {
-			fmt.Println("Please supply a valid address for the location.")
+			fmt.Printf("Please supply a valid address for '%s'. \n", addressName)
 		}
 	}
 

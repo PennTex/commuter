@@ -13,6 +13,10 @@ var MAPS_API_KEY = ""
 type GoogleMapsAddressValidator struct{}
 
 func (g GoogleMapsAddressValidator) IsValidAddress(address string) (bool, error) {
+	if address == "" {
+		return false, nil
+	}
+
 	client, err := maps.NewClient(maps.WithAPIKey(MAPS_API_KEY))
 	if err != nil {
 		return false, err
@@ -23,7 +27,7 @@ func (g GoogleMapsAddressValidator) IsValidAddress(address string) (bool, error)
 	}
 	_, err = client.Geocode(context.Background(), a)
 	if err != nil {
-		return false, err
+		return false, nil
 	}
 	return true, nil
 }

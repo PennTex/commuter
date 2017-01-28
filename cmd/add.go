@@ -18,9 +18,10 @@ var addCmd = &cobra.Command{
 		addressValidator := directions.GoogleMapsAddressValidator{}
 		workReader := bufio.NewReader(os.Stdin)
 
+		locationName := utils.GetLocationNameFromUser(workReader)
 		work := directions.Location{
-			Name:    utils.GetLocationNameFromUser(workReader),
-			Address: utils.GetLocationAddressFromUser(addressValidator, workReader),
+			Name:    locationName,
+			Address: utils.GetLocationAddressFromUser(locationName, addressValidator, workReader),
 		}
 
 		Config.AddLocation(work)
