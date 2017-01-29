@@ -39,22 +39,22 @@ func FormatDateTimeInput(dateInput string) (int64, error) {
 
 	//Start time
 	s := strings.Split(dateInput, ":")
-	if len(s) < 2 && len(s[0]) != 4 {
-		return 0, fmt.Errorf("Invalid date format supplied. Expected '%s'. \n", correctFormat)
+	if len(s) < 2 {
+		return 0, fmt.Errorf("Invalid date/time format supplied. Expected '%s'. \n", correctFormat)
 	}
 
 	// Get/Validate start date and time format
 	startDate, startTime := s[0], s[1]
 	if len(startDate) != 4 {
-		return 0, fmt.Errorf("Invalid date supplied. Date must be in MMDD format. Expected '%s'. \n", correctFormat)
+		return 0, fmt.Errorf("Invalid date format. Date must be in MMDD format. Expected '%s'. \n", correctFormat)
 	}
 	isPM := strings.Contains(startTime, "PM")
 	isAM := strings.Contains(startTime, "AM")
 
 	if (isAM || isPM) && len(startTime) != 6 {
-		return 0, fmt.Errorf("Invalid time supplied. Time must be in HHMM format. Expected '%s[AM|PM]'. \n", correctFormat)
+		return 0, fmt.Errorf("Invalid time format. Time must be in HHMM format. Expected '%s[AM|PM]'. \n", correctFormat)
 	} else if (!isAM && !isPM) && len(startTime) != 4 {
-		return 0, fmt.Errorf("Invalid time supplied. Time must be in HHMM format. Expected '%s'. \n", correctFormat)
+		return 0, fmt.Errorf("Invalid time format. Time must be in HHMM format. Expected '%s'. \n", correctFormat)
 	}
 
 	// Get/Validate start month
