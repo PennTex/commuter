@@ -60,7 +60,7 @@ func FormatDateTimeInput(dateInput string) (int64, error) {
 	// Get/Validate start month
 	startMonth, _ := strconv.Atoi(startDate[0:2])
 	if startMonth < 1 || startMonth > 12 {
-		return 0, fmt.Errorf("Invalid month supplied. Month must be between 1-12. Expected '%s'. \n", correctFormat)
+		return 0, fmt.Errorf("Invalid month supplied - Month must be between 1-12. Expected '%s'. \n", correctFormat)
 	}
 
 	var startYear int
@@ -73,7 +73,7 @@ func FormatDateTimeInput(dateInput string) (int64, error) {
 	// Get/Validate start day
 	startDay, _ := strconv.Atoi(startDate[2:4])
 	if startDay < 1 || startDay > 31 {
-		return 0, fmt.Errorf("Invalid day supplied. Day must be between 1-31. Expected '%s'. \n", correctFormat)
+		return 0, fmt.Errorf("Invalid day supplied - Day must be between 1-31. Expected '%s'. \n", correctFormat)
 	}
 
 	// Get/Validate start time
@@ -81,14 +81,14 @@ func FormatDateTimeInput(dateInput string) (int64, error) {
 	startMinute, _ := strconv.Atoi(startTime[2:4])
 	if isPM || isAM {
 		if startHour < 1 || startHour > 12 {
-			return 0, fmt.Errorf("Invalid time supplied. Expected 12 hr time format. Expected '%s[AM|PM]'. \n", correctFormat)
+			return 0, fmt.Errorf("Invalid time supplied - Expected 12 hr time format. Expected '%s[AM|PM]'. \n", correctFormat)
 		}
 		if isPM {
 			startHour += 12
 		}
 	} else {
 		if startHour < 1 || startHour > 24 {
-			return 0, fmt.Errorf("Invalid time supplied. Expected 24 hr time format. Expected %s. \n", correctFormat)
+			return 0, fmt.Errorf("Invalid time supplied - Expected 24 hr time format. Expected %s. \n", correctFormat)
 		}
 	}
 
@@ -104,22 +104,29 @@ func FormatTimeInput(timeInput string) (int64, error) {
 
 	//Start time
 	if len(timeInput) != 4 && len(timeInput) != 6 {
-		return 0, fmt.Errorf("Invalid time supplied. Expected 12 hr time format. Expected '%s[AM|PM]'!!! \n", correctFormat)
+		return 0, fmt.Errorf("Invalid time supplied - Expected 12 hr time format. Expected '%s[AM|PM]'!!! \n", correctFormat)
 	}
+
+	//Get current hour/minute
+	currentHour := time.Now().Hour()
+	currentMinute := time.Now().Minute()
 
 	//Get/validate start time
 	startHour, _ := strconv.Atoi(timeInput[0:2])
 	startMinute, _ := strconv.Atoi(timeInput[2:4])
+	if startHour < currentHour || (startHour == currentHour && startMinute < currentMinute) {
+		return 0, fmt.Errorf("Invalid time supplied - Time cannot be in the past.\n")
+	}
 	if isPM || isAM {
 		if startHour < 1 || startHour > 12 {
-			return 0, fmt.Errorf("Invalid time supplied. Expected 12 hr time format. Expected '%s[AM|PM]'. \n", correctFormat)
+			return 0, fmt.Errorf("Invalid time supplied - Expected 12 hr time format. Expected '%s[AM|PM]'. \n", correctFormat)
 		}
 		if isPM {
 			startHour += 12
 		}
 	} else {
 		if startHour < 1 || startHour > 24 {
-			return 0, fmt.Errorf("Invalid time supplied. Expected 24 hr time format. Expected %s. \n", correctFormat)
+			return 0, fmt.Errorf("Invalid time supplied - Expected 24 hr time format. Expected %s. \n", correctFormat)
 		}
 	}
 
