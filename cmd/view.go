@@ -11,6 +11,7 @@ var viewCmd = &cobra.Command{
 	Short: "View your commute on google maps",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		commute = createCommute(from, to, start)
 		open.Run(commute.GetMapsURL())
 	},
 }

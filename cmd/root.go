@@ -16,7 +16,9 @@ import (
 var Config config.ConfigManager
 var Logger = utils.Logger{Logging: false}
 var configFile string
-var commute directions.Commute
+var commute *directions.Commute
+var commuteInfoer directions.GoogleMapsCommuteInfoer
+var weatherInfoer weather.DarkSkyWeatherInfoer
 
 var from string
 var to string
@@ -39,7 +41,7 @@ func formatTime(unixTimeStamp int64) string {
 	return fmt.Sprintf("%d:%02d:%02d %s", hr, min, sec, amPm)
 }
 
-func createCommute(fromLocationName string, toLocationName string, start string) directions.Commute {
+func createCommute(fromLocationName string, toLocationName string, start string) *directions.Commute {
 	from, err := Config.GetLocationByName(fromLocationName)
 	utils.ProcessError(err, "Getting location by name")
 	to, err := Config.GetLocationByName(toLocationName)
@@ -56,24 +58,34 @@ func createCommute(fromLocationName string, toLocationName string, start string)
 		commuteTime = time.Now().Unix() // default
 	}
 
-	return directions.NewCommute(from, to, commuteTime)
+	commute, err := directions.NewCommute(commuteInfoer, from, to, commuteTime)
+
+	if err != nil {
+		utils.ProcessError(err, "Error creating commute")
+	}
+
+	return commute
 }
 
-func getPossibleCommutes(commute directions.Commute, minuteInterval int) []directions.Commute {
+func getPossibleCommutes(commute *directions.Commute, minuteInterval int) []directions.Commute {
 	var allCommutes []directions.Commute
 	interval := int64(minuteInterval * 60)
 
 	for i := 0; i < numResults; i++ {
 		travelTime := commuteTime + (interval * int64(i))
-		newCommute := directions.NewCommute(commute.From, commute.To, travelTime)
+		newCommute, err := directions.NewCommute(commuteInfoer, commute.From, commute.To, travelTime)
 
-		allCommutes = append(allCommutes, newCommute)
+		if err != nil {
+			utils.ProcessError(err, err.Error())
+		}
+
+		allCommutes = append(allCommutes, *newCommute)
 	}
 
 	return allCommutes
 }
 
-func getShortestCommute(commutes []directions.Commute) directions.Commute {
+func getShortestCommute(commutes []directions.Commute) *directions.Commute {
 	var shortest directions.Commute
 
 	for _, commute := range commutes {
@@ -82,7 +94,7 @@ func getShortestCommute(commutes []directions.Commute) directions.Commute {
 		}
 	}
 
-	return shortest
+	return &shortest
 }
 
 func printCommuteTimes(commutes []directions.Commute) {
@@ -99,9 +111,13 @@ func printCommuteTimes(commutes []directions.Commute) {
 	}
 }
 
-func printWeatherInfo(commute directions.Commute) {
+func printWeatherInfo(commute *directions.Commute) {
 	//Print Weather Info
-	commuteWeather := weather.GetInfo(int(commute.Time), commute.Lat, commute.Lng)
+	commuteWeather, err := weatherInfoer.GetWeatherInfo(int(commute.Time), commute.Lat, commute.Lng)
+	if err != nil {
+		utils.ProcessError(err, err.Error())
+	}
+
 	fmt.Printf("Summary: %v \nTemperature: %v° F \nWind Speed: %v MPH \nChance Of Rain: %v%% \n\n", commuteWeather.Summary, commuteWeather.Temp, commuteWeather.Wind, commuteWeather.PrecipProbability)
 }
 
@@ -113,19 +129,20 @@ var RootCmd = &cobra.Command{
 		// get config file location
 		usr, err := user.Current()
 		utils.ProcessError(err, "")
-		configFile = fmt.Sprintf("%s/commuter-config.json", usr.HomeDir)
+		configFile = fmt.Sprintf("%s/.commuter/config.json", usr.HomeDir)
 
 		if cmd.Use != "init" {
 			if fStat, err := os.Stat(configFile); os.IsNotExist(err) || fStat.Size() == 0 {
-				fmt.Println("Please initialize Commuter by using the 'commuter init' command")
-				return
+				fmt.Println("Commuter config not found. Please initialize Commuter by using the 'commuter init' command")
+				os.Exit(1)
 			}
 		}
 
 		Config = config.New(configFile)
-		commute = createCommute(from, to, start)
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		commute = createCommute(from, to, start)
+
 		fmt.Printf("\nCommute from %s to %s\n", commute.From.Name, commute.To.Name)
 		allCommutes := getPossibleCommutes(commute, interval)
 		printCommuteTimes(allCommutes)

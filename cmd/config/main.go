@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path"
 
 	"github.com/PennTex/commuter/cmd/utils"
 	"github.com/PennTex/commuter/directions"
@@ -56,7 +57,7 @@ func (cm *ConfigManager) GetLocationByName(name string) (directions.Location, er
 		}
 	}
 
-	return directions.Location{}, fmt.Errorf("Location %s not found.", name)
+	return directions.Location{}, fmt.Errorf("Location '%s' not found.", name)
 }
 
 func getLocationIdxByName(locations []directions.Location, name string) int {
@@ -76,6 +77,8 @@ func getConfig(configFile string) Config {
 
 	// create if not exists
 	if f, err = os.Open(configFile); err != nil {
+		basepath := path.Dir(configFile)
+		os.MkdirAll(basepath, 0777)
 		f, err = os.Create(configFile)
 		utils.ProcessError(err, "Creating config file")
 	}
