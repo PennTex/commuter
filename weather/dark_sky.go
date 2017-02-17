@@ -20,7 +20,7 @@ func (d *DarkSkyWeatherInfoer) GetWeatherInfo(t int, latitude float64, longitude
 	lat := strconv.FormatFloat(latitude, 'f', 6, 64)
 	lng := strconv.FormatFloat(longitude, 'f', 6, 64)
 
-	f, err := forecast.Get(DARK_SKY_API_KEY, lat, lng, strconv.Itoa(t), forecast.US)
+	f, err := forecast.Get(DARK_SKY_API_KEY, lat, lng, strconv.Itoa(t), forecast.US, forecast.English)
 	if err != nil {
 		return nil, errors.New("Getting forecast from DarkSky")
 	}
