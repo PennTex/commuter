@@ -44,6 +44,11 @@ commuter add
 commuter delete
 ```
 
+#### To view all saved addresses:
+```sh
+commuter list
+```
+
 #### To view your commute in google maps:
 ```sh
 # for default values(work -> home)
