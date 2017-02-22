@@ -93,6 +93,6 @@ commuter -s 1700
 
 ## Contributors
 
-#### [Mario Harper](https://www.PennTex.me)
-#### [John Stamatakos](https://github.com/johnstamatakos)
+#### [Mario Harper](https://www.marioharper.me)
+#### [John Stamatakos](https://www.johnstamatakos.me)
 ##### Copyright 2016
