@@ -81,6 +81,9 @@ commuter -s 1214:1600
 
 # start December 14th 4:00PM
 commuter -s 1215:0400PM
+
+# start on current date at 5:00PM (currently only supports 24-hour clock - all times must be in the future)
+commuter -s 1700
 ```
 
 ## Contributors
